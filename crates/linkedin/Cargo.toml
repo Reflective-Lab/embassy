@@ -1,0 +1,16 @@
+[package]
+name = "embassy-linkedin"
+description = "LinkedIn port — professional network research integration"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+embassy-pack = { path = "../pack", version = "0.1.0" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,66 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/pack",
+    "crates/linkedin",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94.0"
+license = "MIT"
+repository = "https://github.com/Reflective-Lab/embassy"
+
+[workspace.dependencies]
+# Converge platform — re-add and patch when the first port emits a Suggestor
+# or otherwise depends on Converge's stable contract surface.
+# converge-core = "3.7.6"
+# converge-pack = "3.7.6"
+
+# Async / HTTP
+tokio = { version = "1.48", features = ["full", "macros", "sync"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+# Common
+async-trait = "0.1"
+thiserror = "2"
+tracing = "0.1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+too_many_lines = "allow"
+similar_names = "allow"
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_sign_loss = "allow"
+cast_lossless = "allow"
+cast_precision_loss = "allow"
+must_use_candidate = "allow"
+doc_markdown = "allow"
+uninlined_format_args = "allow"
+needless_pass_by_value = "allow"
+unused_self = "allow"
+wildcard_imports = "allow"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+# Track unreleased Converge platform head until each crate ships to crates.io.
+# Re-enable when a port crate adds a converge-* dep above.
+# [patch.crates-io]
+# converge-core = { path = "../../work/converge/crates/core" }
+# converge-pack = { path = "../../work/converge/crates/pack" }
