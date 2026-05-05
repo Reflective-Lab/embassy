@@ -1,5 +1,14 @@
 # embassy
 
+[![CI](https://github.com/Reflective-Lab/embassy/actions/workflows/ci.yml/badge.svg)](https://github.com/Reflective-Lab/embassy/actions/workflows/ci.yml)
+[![Security](https://github.com/Reflective-Lab/embassy/actions/workflows/security.yml/badge.svg)](https://github.com/Reflective-Lab/embassy/actions/workflows/security.yml)
+[![Crates.io](https://img.shields.io/crates/v/embassy-pack.svg)](https://crates.io/crates/embassy-pack)
+[![docs.rs](https://docs.rs/embassy-pack/badge.svg)](https://docs.rs/embassy-pack)
+[![dependency status](https://deps.rs/repo/github/Reflective-Lab/embassy/status.svg)](https://deps.rs/repo/github/Reflective-Lab/embassy)
+![MSRV](https://img.shields.io/badge/MSRV-1.94.0-blue)
+<img alt="gitleaks badge" src="https://img.shields.io/badge/protected%20by-gitleaks-blue">
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Source-specific connector ports for Converge extensions.
 
 `embassy` is where integrations live when the external system identity is part
