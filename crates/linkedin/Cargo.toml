@@ -8,7 +8,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-embassy-pack = { path = "../pack", version = "0.1.0" }
+embassy-pack = { path = "../pack", version = "1.0.0" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 
