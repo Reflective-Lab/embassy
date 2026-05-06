@@ -6,7 +6,7 @@ source: mixed
 
 ```bash
 git clone https://github.com/Reflective-Lab/embassy-ports.git
-cd embassy
+cd embassy-ports
 just                # check + lint + test
 ```
 
