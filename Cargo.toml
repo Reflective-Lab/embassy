@@ -10,7 +10,7 @@ version = "1.0.0"
 edition = "2024"
 rust-version = "1.94.0"
 license = "MIT"
-repository = "https://github.com/Reflective-Lab/embassy"
+repository = "https://github.com/Reflective-Lab/embassy-ports"
 
 [workspace.dependencies]
 # Converge platform — re-add when the first port emits a Suggestor

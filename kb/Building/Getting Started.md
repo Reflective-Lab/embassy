@@ -5,7 +5,7 @@ source: mixed
 # Getting Started
 
 ```bash
-git clone https://github.com/Reflective-Lab/embassy.git
+git clone https://github.com/Reflective-Lab/embassy-ports.git
 cd embassy
 just                # check + lint + test
 ```
