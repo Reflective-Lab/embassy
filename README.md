@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/ci.yml/badge.svg)](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/ci.yml)
 [![Security](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/security.yml/badge.svg)](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/security.yml)
-[![Crates.io](https://img.shields.io/crates/v/embassy-pack.svg)](https://crates.io/crates/embassy-pack)
-[![docs.rs](https://docs.rs/embassy-pack/badge.svg)](https://docs.rs/embassy-pack)
+[![Crates.io](https://img.shields.io/crates/v/converge-embassy-pack.svg)](https://crates.io/crates/converge-embassy-pack)
+[![docs.rs](https://docs.rs/converge-embassy-pack/badge.svg)](https://docs.rs/converge-embassy-pack)
 [![dependency status](https://deps.rs/repo/github/Reflective-Lab/embassy-ports/status.svg)](https://deps.rs/repo/github/Reflective-Lab/embassy-ports)
 ![MSRV](https://img.shields.io/badge/MSRV-1.94.0-blue)
 <img alt="gitleaks badge" src="https://img.shields.io/badge/protected%20by-gitleaks-blue">
@@ -15,6 +15,9 @@ Source-specific connector ports for Converge extensions.
 of the semantic contract. LinkedIn is not just "a search provider"; it carries
 source-specific identity, terms, rate limits, provenance, and business meaning.
 That source-shaped contract belongs here.
+
+Cargo packages: `converge-embassy-pack` and `converge-embassy-linkedin`. Rust
+library names remain `embassy_pack` and `embassy_linkedin`.
 
 ## Why It Exists
 

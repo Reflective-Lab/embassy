@@ -1,11 +1,15 @@
 [package]
-name = "embassy-pack"
+name = "converge-embassy-pack"
 description = "Shared contract surface for embassy ports — call context, observations, provenance"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
+
+[lib]
+name = "embassy_pack"
+path = "src/lib.rs"
 
 [dependencies]
 serde = { workspace = true }

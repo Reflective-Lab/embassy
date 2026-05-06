@@ -13,3 +13,9 @@ All notable changes to embassy will be documented in this file.
 - `embassy-linkedin` (0.1.0) — first port landed. Extracted from
   `organism/crates/intelligence/src/linkedin.rs`. Stub provider only;
   real backing implementation TBD.
+
+### Changed
+
+- Cargo packages renamed to `converge-embassy-pack` and
+  `converge-embassy-linkedin`; Rust library names remain `embassy_pack` and
+  `embassy_linkedin`.
