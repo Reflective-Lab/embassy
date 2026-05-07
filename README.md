@@ -1,7 +1,9 @@
 # embassy
 
 [![CI](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/ci.yml/badge.svg)](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/ci.yml)
+[![Coverage](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/coverage.yml/badge.svg)](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/coverage.yml)
 [![Security](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/security.yml/badge.svg)](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/security.yml)
+[![Stability](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/stability.yml/badge.svg)](https://github.com/Reflective-Lab/embassy-ports/actions/workflows/stability.yml)
 [![Crates.io](https://img.shields.io/crates/v/converge-embassy-pack.svg)](https://crates.io/crates/converge-embassy-pack)
 [![docs.rs](https://docs.rs/converge-embassy-pack/badge.svg)](https://docs.rs/converge-embassy-pack)
 [![dependency status](https://deps.rs/repo/github/Reflective-Lab/embassy-ports/status.svg)](https://deps.rs/repo/github/Reflective-Lab/embassy-ports)
