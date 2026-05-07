@@ -88,3 +88,74 @@ impl LinkedInProvider for StubLinkedInProvider {
         Ok(LinkedInGetResponse { records: vec![obs] })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn request_new_starts_with_empty_query() {
+        let req = LinkedInGetRequest::new("/v2/people");
+        assert_eq!(req.endpoint, "/v2/people");
+        assert!(req.query.is_empty());
+    }
+
+    #[test]
+    fn stub_provider_name_is_stable() {
+        let provider = StubLinkedInProvider;
+        assert_eq!(provider.name(), "stub_linkedin");
+    }
+
+    #[test]
+    fn stub_provider_returns_one_observation() {
+        let provider = StubLinkedInProvider;
+        let mut req = LinkedInGetRequest::new("/v2/people");
+        req.query.insert("q".into(), "engineer".into());
+        let ctx = CallContext::default();
+
+        let response = provider.get(&req, &ctx).expect("ok");
+        assert_eq!(response.records.len(), 1);
+
+        let obs = &response.records[0];
+        assert_eq!(obs.vendor, "stub_linkedin");
+        assert_eq!(obs.model, "stub");
+        assert_eq!(obs.content.profile_id, "LI-STUB-001");
+        assert_eq!(obs.content.name, "Jane Doe");
+        assert_eq!(obs.content.title.as_deref(), Some("VP Engineering"));
+        assert_eq!(obs.content.company.as_deref(), Some("Acme Corp"));
+        assert!(obs.observation_id.starts_with("obs:linkedin:"));
+        assert_eq!(obs.observation_id.len(), "obs:linkedin:".len() + 16);
+    }
+
+    #[test]
+    fn stub_provider_rejects_empty_endpoint() {
+        let provider = StubLinkedInProvider;
+        let req = LinkedInGetRequest::new("   ");
+        let ctx = CallContext::default();
+        let err = provider.get(&req, &ctx).expect_err("must reject");
+        assert_eq!(err, "Empty endpoint");
+    }
+
+    #[test]
+    fn stub_provider_is_deterministic_per_request() {
+        let provider = StubLinkedInProvider;
+        let req = LinkedInGetRequest::new("/v2/people");
+        let ctx = CallContext::default();
+        let a = provider.get(&req, &ctx).expect("ok");
+        let b = provider.get(&req, &ctx).expect("ok");
+        assert_eq!(a.records[0].request_hash, b.records[0].request_hash);
+        assert_eq!(a.records[0].observation_id, b.records[0].observation_id);
+    }
+
+    #[test]
+    fn profile_payload_round_trips() {
+        let req = LinkedInGetRequest::new("/v2/people");
+        let provider = StubLinkedInProvider;
+        let ctx = CallContext::default();
+        let response = provider.get(&req, &ctx).expect("ok");
+        let json = serde_json::to_string(&response).expect("serialize");
+        let back: LinkedInGetResponse = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(back.records.len(), 1);
+        assert_eq!(back.records[0].content.name, "Jane Doe");
+    }
+}
