@@ -12,7 +12,7 @@ name = "embassy_linkedin"
 path = "src/lib.rs"
 
 [dependencies]
-embassy-pack = { package = "converge-embassy-pack", path = "../pack", version = "1.0.0" }
+embassy-pack = { package = "converge-embassy-pack", path = "../pack", version = "1.1.1" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 

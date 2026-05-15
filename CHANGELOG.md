@@ -4,6 +4,13 @@ All notable changes to embassy will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-05-15
+
+### Changed
+
+- Aligned workspace and internal path dependency versions for the coordinated
+  extension release. No public API changes.
+
 ## [1.1.0] - 2026-05-07
 
 ### Added
