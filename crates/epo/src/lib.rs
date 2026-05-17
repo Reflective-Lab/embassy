@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::EpoError;
 pub use provenance::{EPO_PROVENANCE, Epo};
 pub use provider::{EpoProvider, EpoRequest, EpoResponse, StubEpoProvider};
+pub use suggestor::{EpoLookupSuggestor, EpoPatentPayload};
 pub use types::{EpoNumber, Patent};

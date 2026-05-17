@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::WikidataError;
 pub use provenance::{WIKIDATA_PROVENANCE, Wikidata};
 pub use provider::{StubWikidataProvider, WikidataProvider, WikidataRequest, WikidataResponse};
+pub use suggestor::{WikidataEntityPayload, WikidataLookupSuggestor};
 pub use types::{Entity, QId};

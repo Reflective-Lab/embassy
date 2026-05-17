@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::ArxivError;
 pub use provenance::{ARXIV_PROVENANCE, Arxiv};
 pub use provider::{ArxivProvider, ArxivRequest, ArxivResponse, StubArxivProvider};
+pub use suggestor::{ArxivLookupSuggestor, ArxivPaperPayload};
 pub use types::{ArxivId, Paper};

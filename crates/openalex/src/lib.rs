@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::OpenAlexError;
 pub use provenance::{OPENALEX_PROVENANCE, OpenAlex};
 pub use provider::{OpenAlexProvider, OpenAlexRequest, OpenAlexResponse, StubOpenAlexProvider};
+pub use suggestor::{OpenAlexLookupSuggestor, OpenAlexWorkPayload};
 pub use types::{OpenAlexId, Work};

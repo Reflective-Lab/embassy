@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::PubmedError;
 pub use provenance::{PUBMED_PROVENANCE, Pubmed};
 pub use provider::{PubmedProvider, PubmedRequest, PubmedResponse, StubPubmedProvider};
+pub use suggestor::{PubmedArticlePayload, PubmedLookupSuggestor};
 pub use types::{Article, Pmid};

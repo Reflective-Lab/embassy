@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::GithubError;
 pub use provenance::{GITHUB_PROVENANCE, Github};
 pub use provider::{GithubProvider, GithubRequest, GithubResponse, StubGithubProvider};
+pub use suggestor::{GithubLookupSuggestor, GithubOrganizationPayload};
 pub use types::{OrgSlug, Organization};

@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::ScbError;
 pub use provenance::{SCB_PROVENANCE, Scb};
 pub use provider::{ScbProvider, ScbRequest, ScbResponse, StubScbProvider};
+pub use suggestor::{ScbLookupSuggestor, ScbTableMetadataPayload};
 pub use types::{TableId, TableMetadata};

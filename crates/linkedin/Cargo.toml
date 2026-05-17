@@ -13,8 +13,14 @@ path = "src/lib.rs"
 
 [dependencies]
 embassy-pack = { package = "converge-embassy-pack", path = "../pack", version = "1.1.1" }
+converge-pack.workspace = true
+async-trait.workspace = true
 serde = { workspace = true }
 serde_json = { workspace = true }
+tracing.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true }
 
 [lints]
 workspace = true

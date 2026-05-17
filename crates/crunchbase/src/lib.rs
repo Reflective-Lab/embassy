@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -29,4 +30,5 @@ pub use provenance::{CRUNCHBASE_PROVENANCE, Crunchbase};
 pub use provider::{
     CrunchbaseProvider, CrunchbaseRequest, CrunchbaseResponse, StubCrunchbaseProvider,
 };
+pub use suggestor::{CrunchbaseLookupSuggestor, CrunchbaseOrganizationPayload};
 pub use types::{Organization, OrganizationId};

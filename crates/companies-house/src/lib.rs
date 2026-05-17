@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -30,4 +31,5 @@ pub use provider::{
     CompaniesHouseProvider, CompaniesHouseRequest, CompaniesHouseResponse,
     StubCompaniesHouseProvider,
 };
+pub use suggestor::{CompaniesHouseCompanyPayload, CompaniesHouseLookupSuggestor};
 pub use types::{Company, CompanyNumber};

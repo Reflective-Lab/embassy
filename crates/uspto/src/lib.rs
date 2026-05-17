@@ -20,6 +20,7 @@
 mod error;
 mod provenance;
 mod provider;
+mod suggestor;
 mod types;
 
 pub use embassy_pack::{CallContext, Observation, content_hash};
@@ -27,4 +28,5 @@ pub use embassy_pack::{CallContext, Observation, content_hash};
 pub use error::UsptoError;
 pub use provenance::{USPTO_PROVENANCE, Uspto};
 pub use provider::{StubUsptoProvider, UsptoProvider, UsptoRequest, UsptoResponse};
+pub use suggestor::{UsptoLookupSuggestor, UsptoPatentPayload};
 pub use types::{Patent, PatentNumber};
