@@ -14,6 +14,8 @@ Knowledge base for the `embassy` Converge extension.
 ## Architecture
 
 - [[Architecture/Surface]] — public crate surface and contract shape
+- [[Architecture/Operating Authority Boundary]] - evidence ports stay here;
+  business command authority belongs above Embassy
 
 ## Building
 

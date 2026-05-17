@@ -18,6 +18,14 @@ of the semantic contract. LinkedIn is not just "a search provider"; it carries
 source-specific identity, terms, rate limits, provenance, and business meaning.
 That source-shaped contract belongs here.
 
+Embassy is not the home for operating business authority. A source-specific
+system can be named in an Embassy contract when the system is being observed as
+evidence. When the integration changes business state, moves money, grants
+entitlements, signs agreements, mutates CRM records, updates payroll, or
+creates customer or partner obligations, the owning business layer must define
+the command surface and policy. Embassy may still provide source-faithful
+observations, but it must not own the business action.
+
 Cargo packages: `converge-embassy-pack` and `converge-embassy-linkedin`. Rust
 library names remain `embassy_pack` and `embassy_linkedin`.
 
@@ -35,6 +43,17 @@ generic provider interface.
 - Source-specific provider traits.
 - Stub providers for deterministic tests.
 
+## What Embassy Does Not Own
+
+- Reflective Labs billing, subscriptions, partner payouts, marketplace terms,
+  entitlements, or revenue sharing.
+- Customer business workflows, domain Truth catalogs, projections, or writeback
+  policy.
+- Irreversible command policy, approval placement, ledger posting, webhook
+  replay protection, tenant secret storage, or runtime deployment topology.
+- Generic provider capabilities such as fetch, search, storage, vector recall,
+  LLM calls, or interchangeable tool execution.
+
 ## Embassy vs Manifold
 
 | Question | Embassy | Manifold |
@@ -46,6 +65,12 @@ generic provider interface.
 
 If the contract must name the external system, use Embassy. If the caller only
 needs a generic capability, use `../manifold`.
+
+If the integration acts with business authority, use the owning product,
+customer, or Reflective operating layer. For example, an SEC filing observation
+may belong in Embassy, but `PartnerPayout`, `Subscription`,
+`EntitlementGrant`, and `RevenueShareAgreement` belong in Reflective Commerce
+Rails because Reflective bears the commercial consequence.
 
 ## Repository Layout
 

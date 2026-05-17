@@ -5,6 +5,21 @@ members = [
     "crates/linkedin",
     "crates/sec-edgar",
     "crates/bolagsverket",
+    # P0 counterparty + sanctions cluster (added 2026-05-17).
+    "crates/gleif",
+    "crates/vies",
+    # P0 sanctions trio — coherent shape across three sources
+    # (US Treasury OFAC, EU Consolidated, US Commerce BIS).
+    "crates/ofac-sls",
+    "crates/eu-sanctions",
+    "crates/commerce-csl",
+    # P0 US federal counterparty + spend (Q1 + Q3 in one bundle).
+    "crates/sam-gov",
+    "crates/usaspending",
+    # P0 EU + Sweden procurement.
+    "crates/ted",
+    # P0 Sweden tax — publicly queryable surface only.
+    "crates/skatteverket",
     # Skeleton ports — typed identifier + entity placeholder, Provider
     # trait + stub. Expand each when an app pulls on the corresponding
     # domain; do not grow the entity shape preemptively.
@@ -21,7 +36,7 @@ members = [
 ]
 
 [workspace.package]
-version = "1.2.0"
+version = "1.3.0"
 edition = "2024"
 rust-version = "1.94.0"
 license = "MIT"

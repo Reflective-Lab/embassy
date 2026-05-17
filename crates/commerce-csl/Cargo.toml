@@ -1,0 +1,29 @@
+[package]
+name = "converge-embassy-commerce-csl"
+description = "Commerce CSL port — US Department of Commerce Consolidated Screening List (BIS Entity List, Denied Persons, Unverified List)."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords = ["converge", "embassy", "sanctions", "commerce", "bis"]
+categories = ["api-bindings"]
+
+[lib]
+name = "embassy_commerce_csl"
+path = "src/lib.rs"
+
+[dependencies]
+embassy-pack = { package = "converge-embassy-pack", path = "../pack", version = "1.1.1" }
+converge-pack.workspace = true
+async-trait.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true }
+
+[lints]
+workspace = true
