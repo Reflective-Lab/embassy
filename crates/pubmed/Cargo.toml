@@ -1,0 +1,29 @@
+[package]
+name = "converge-embassy-pubmed"
+description = "PubMed / NCBI E-utilities — biomedical literature (PMID, MeSH)."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords = ["converge", "embassy", "pubmed"]
+categories = ["api-bindings"]
+
+[lib]
+name = "embassy_pubmed"
+path = "src/lib.rs"
+
+[dependencies]
+embassy-pack = { package = "converge-embassy-pack", path = "../pack", version = "1.1.1" }
+converge-pack.workspace = true
+async-trait.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true }
+
+[lints]
+workspace = true

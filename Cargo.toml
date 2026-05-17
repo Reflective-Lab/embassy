@@ -5,6 +5,19 @@ members = [
     "crates/linkedin",
     "crates/sec-edgar",
     "crates/bolagsverket",
+    # Skeleton ports — typed identifier + entity placeholder, Provider
+    # trait + stub. Expand each when an app pulls on the corresponding
+    # domain; do not grow the entity shape preemptively.
+    "crates/uspto",
+    "crates/crunchbase",
+    "crates/github",
+    "crates/pubmed",
+    "crates/arxiv",
+    "crates/openalex",
+    "crates/wikidata",
+    "crates/companies-house",
+    "crates/scb",
+    "crates/epo",
 ]
 
 [workspace.package]
