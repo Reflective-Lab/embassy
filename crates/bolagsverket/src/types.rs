@@ -78,7 +78,7 @@ fn luhn_check(digits: &str) -> bool {
             }
         })
         .sum();
-    total % 10 == 0
+    total.is_multiple_of(10)
 }
 
 /// Swedish legal form (företagsform).

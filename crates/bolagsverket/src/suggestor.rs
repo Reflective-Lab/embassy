@@ -50,7 +50,7 @@ impl<P: BolagsverketProvider + 'static> BolagsverketLookupSuggestor<P> {
 
 #[async_trait]
 impl<P: BolagsverketProvider + 'static> Suggestor for BolagsverketLookupSuggestor<P> {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "BolagsverketLookupSuggestor"
     }
 

@@ -3,10 +3,10 @@
 
 //! Provider trait + stub implementation.
 //!
-//! The real provider (HTTP against `https://www.sec.gov/cgi-bin/browse-edgar`
-//! + filing index XML/JSON + section extraction) is deferred behind a
-//! future `live` feature flag. The stub here is what tests and
-//! Formation harnesses exercise — deterministic, no network, no
+//! The real provider (HTTP against the SEC's EDGAR endpoints plus filing-index
+//! XML/JSON and section extraction) lives behind the `live` cargo feature in
+//! `crate::live`. The stub here is what default (`live = off`) builds, CI,
+//! and Formation harnesses exercise — deterministic, no network, no
 //! credentials.
 
 use async_trait::async_trait;

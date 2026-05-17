@@ -64,7 +64,7 @@ impl CrunchbaseProvider for StubCrunchbaseProvider {
         let CrunchbaseRequest::Lookup { identifier } = request;
         let entity = Organization {
             permalink: identifier.clone(),
-            name: format!("Stub Organization"),
+            name: "Stub Organization".to_string(),
         };
 
         let obs = Observation {

@@ -63,7 +63,7 @@ impl ArxivProvider for StubArxivProvider {
         let ArxivRequest::Lookup { identifier } = request;
         let entity = Paper {
             arxiv_id: identifier.clone(),
-            title: format!("Stub Paper"),
+            title: "Stub Paper".to_string(),
         };
 
         let obs = Observation {

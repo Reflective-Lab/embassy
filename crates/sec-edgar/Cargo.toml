@@ -22,6 +22,19 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP+HTML transport — only pulled in when the `live` feature is
+# enabled. Stub-only consumers (CI loops, formation harnesses, unit
+# tests) see no manifold/tokio surface.
+manifold = { workspace = true, optional = true, features = ["fetch", "extract"] }
+tokio = { workspace = true, optional = true }
+
+[features]
+default = []
+# Bring in the live SEC EDGAR transport: HTTP fetch (with SEC's required
+# User-Agent), HTML section locator, multi-selector heading extractor.
+# Tests on this feature use canned HTML fixtures — no network in CI.
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 

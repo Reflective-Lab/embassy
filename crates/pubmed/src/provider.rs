@@ -63,7 +63,7 @@ impl PubmedProvider for StubPubmedProvider {
         let PubmedRequest::Lookup { identifier } = request;
         let entity = Article {
             pmid: identifier.clone(),
-            title: format!("Stub Article"),
+            title: "Stub Article".to_string(),
         };
 
         let obs = Observation {

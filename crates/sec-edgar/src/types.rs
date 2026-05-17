@@ -55,7 +55,7 @@ pub struct AccessionNumber(String);
 impl AccessionNumber {
     pub fn parse(raw: impl AsRef<str>) -> Result<Self, SecEdgarError> {
         let raw = raw.as_ref().trim();
-        let digits: String = raw.chars().filter(|c| c.is_ascii_digit()).collect();
+        let digits: String = raw.chars().filter(char::is_ascii_digit).collect();
         if digits.len() != 18 {
             return Err(SecEdgarError::InvalidAccession(format!(
                 "expected 18 digits, got {} from `{raw}`",

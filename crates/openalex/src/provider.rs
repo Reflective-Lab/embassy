@@ -63,7 +63,7 @@ impl OpenAlexProvider for StubOpenAlexProvider {
         let OpenAlexRequest::Lookup { identifier } = request;
         let entity = Work {
             id: identifier.clone(),
-            title: format!("Stub Work"),
+            title: "Stub Work".to_string(),
         };
 
         let obs = Observation {

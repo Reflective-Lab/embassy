@@ -27,15 +27,15 @@ use crate::types::Filing;
 /// convergence kernel's promotion machinery.
 ///
 /// Flattens the provider-side [`embassy_pack::Observation`] into the
-/// audit-relevant fields directly: the kernel's `ProposedFact` already
-/// owns provenance and the FactPayload contract requires `PartialEq`
+/// audit-relevant fields directly. The kernel's `ProposedFact` already
+/// owns provenance and the `FactPayload` contract requires `PartialEq`
 /// for deduplication, so re-wrapping `Observation<T>` would force
 /// embassy-pack to derive `PartialEq` on every typed content. Keep the
 /// observation shape at the provider boundary; flatten at the kernel
 /// boundary.
 ///
-/// Carries an [`ExecutionIdentity`] recording producer + provider name
-/// + runtime config so audit and replay can answer *which provider,
+/// Carries an [`ExecutionIdentity`] recording producer, provider name,
+/// and runtime config so audit and replay can answer *which provider,
 /// with which request, produced this filing*.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -73,7 +73,7 @@ impl<P: SecEdgarProvider + 'static> SecFilingSuggestor<P> {
 
 #[async_trait]
 impl<P: SecEdgarProvider + 'static> Suggestor for SecFilingSuggestor<P> {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "SecFilingSuggestor"
     }
 

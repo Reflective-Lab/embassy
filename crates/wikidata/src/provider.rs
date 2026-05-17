@@ -63,7 +63,7 @@ impl WikidataProvider for StubWikidataProvider {
         let WikidataRequest::Lookup { identifier } = request;
         let entity = Entity {
             qid: identifier.clone(),
-            label: format!("Stub Entity"),
+            label: "Stub Entity".to_string(),
         };
 
         let obs = Observation {

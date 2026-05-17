@@ -60,7 +60,7 @@ impl ScbProvider for StubScbProvider {
         let ScbRequest::Lookup { identifier } = request;
         let entity = TableMetadata {
             table_id: identifier.clone(),
-            title: format!("Stub TableMetadata"),
+            title: "Stub TableMetadata".to_string(),
         };
 
         let obs = Observation {

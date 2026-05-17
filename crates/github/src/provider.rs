@@ -63,7 +63,7 @@ impl GithubProvider for StubGithubProvider {
         let GithubRequest::Lookup { identifier } = request;
         let entity = Organization {
             login: identifier.clone(),
-            html_url: format!("Stub Organization"),
+            html_url: "Stub Organization".to_string(),
         };
 
         let obs = Observation {

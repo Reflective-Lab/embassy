@@ -64,7 +64,7 @@ impl CompaniesHouseProvider for StubCompaniesHouseProvider {
         let CompaniesHouseRequest::Lookup { identifier } = request;
         let entity = Company {
             company_number: identifier.clone(),
-            company_name: format!("Stub Company"),
+            company_name: "Stub Company".to_string(),
         };
 
         let obs = Observation {

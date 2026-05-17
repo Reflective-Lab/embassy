@@ -63,7 +63,7 @@ impl UsptoProvider for StubUsptoProvider {
         let UsptoRequest::Lookup { identifier } = request;
         let entity = Patent {
             patent_number: identifier.clone(),
-            title: format!("Stub Patent"),
+            title: "Stub Patent".to_string(),
         };
 
         let obs = Observation {
