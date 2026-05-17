@@ -4,6 +4,25 @@ All notable changes to embassy will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-05-17
+
+### Added
+
+- Nine P0 ports answering the executive business questions: `gleif`,
+  `vies`, `ofac-sls`, `eu-sanctions`, `commerce-csl`, `sam-gov`,
+  `usaspending`, `ted`, `skatteverket`. Sanctions trio uses a
+  coherent `SanctionsHit` shape across all three sources.
+- `sec-edgar` `live` feature: real transport lifted from fathom-sparc.
+- Ten skeleton ports (uspto, crunchbase, github, pubmed, arxiv,
+  openalex, wikidata, companies-house, scb, epo).
+- Suggestor wrappers across all eleven ports; LinkedIn async path.
+
+### Changed
+
+- Workspace floor: Converge 3.9.1.
+- First release where all five `just release-check` gates pass cleanly
+  before tagging.
+
 ## [1.1.1] - 2026-05-15
 
 ### Changed

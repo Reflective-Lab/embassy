@@ -7,17 +7,21 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::GleifError;
 
-/// Legal Entity Identifier — 20 characters per ISO 17442.
+/// Legal Entity Identifier — 20 characters per ISO 17442-1:2020.
 ///
 /// Structure:
 /// - chars 1-4: LOU prefix (Local Operating Unit / issuer code)
-/// - chars 5-6: reserved `"00"`
-/// - chars 7-18: entity-specific code
+/// - chars 5-18: entity-specific code assigned by the LOU
 /// - chars 19-20: mod-97-10 check digits
 ///
-/// The port validates the check digit on construction. A typo in any
-/// position fails parse rather than silently passing through to the
-/// audit log.
+/// The 2012 edition of the standard reserved chars 5-6 as `"00"`; the
+/// 2020 revision (ISO 17442-1) dropped that reservation and lets the
+/// assigning LOU choose. Real-world LEIs (e.g., Apple Inc.'s
+/// `HWUPKR0MPOU8FGXBT394`) use non-zero chars there.
+///
+/// The port validates the mod-97 check digit on construction. A typo
+/// in any position fails parse rather than silently passing through to
+/// the audit log.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct Lei(String);
@@ -34,12 +38,6 @@ impl Lei {
         if !raw.chars().all(|c| c.is_ascii_alphanumeric()) {
             return Err(GleifError::InvalidLei(format!(
                 "LEI may only contain A-Z and 0-9: `{raw}`"
-            )));
-        }
-        // Chars 5-6 are reserved "00" by the standard.
-        if &raw[4..6] != "00" {
-            return Err(GleifError::InvalidLei(format!(
-                "chars 5-6 must be \"00\" per ISO 17442: `{raw}`"
             )));
         }
         if !verify_mod_97(&raw) {
@@ -204,16 +202,6 @@ mod tests {
         // whitespace mid-token, or unicode means corrupt input.
         assert!(Lei::parse("HWUPKR-0MPOU8FGXBT394").is_err());
         assert!(Lei::parse("HWUPKR_0MPOU8FGXBT394").is_err());
-    }
-
-    #[test]
-    fn lei_rejects_missing_reserved_zeros() {
-        // Intent: the standard reserves chars 5-6 as `"00"`. Anything
-        // else is a malformed LEI; even if the check digit somehow
-        // passed it would still violate the spec.
-        // Build a string that's mod-97-valid in shape but has wrong
-        // reserved chars — should fail.
-        assert!(Lei::parse("HWUPKR99POU8FGXBT394").is_err());
     }
 
     #[test]
