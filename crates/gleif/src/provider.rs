@@ -156,10 +156,15 @@ fn synthetic_lei(request_hash: &str, idx: usize) -> Lei {
     // Reserved chars 5-6 must be "00".
     base[4] = b'0';
     base[5] = b'0';
-    let base_str = std::str::from_utf8(&base).expect("ascii by construction");
+    // base is constructed from ASCII digits and letters only — from_utf8 cannot fail.
+    let base_str = std::str::from_utf8(&base)
+        .unwrap_or_else(|_| unreachable!("base is ASCII by construction"));
     let check = compute_mod_97_check(base_str);
     let full = format!("{base_str}{check:02}");
-    Lei::parse(&full).expect("synthetic LEI must satisfy mod-97 check by construction")
+    Lei::parse(&full).unwrap_or_else(|e| {
+        debug_assert!(false, "synthetic_lei produced invalid LEI: {e}");
+        unreachable!("synthetic LEI construction invariant violated")
+    })
 }
 
 /// Compute the ISO 17442 mod-97-10 check digits for an 18-character base.
@@ -183,7 +188,8 @@ fn compute_mod_97_check(base_18: &str) -> u8 {
     // Account for the trailing "00" that will become the check digits.
     residue = (residue * 100) % 97;
     let check = (98 - residue) % 97;
-    u8::try_from(check).expect("mod 97 fits in u8")
+    debug_assert!(check < 256, "mod-97 result must fit in u8");
+    check as u8
 }
 
 #[cfg(test)]

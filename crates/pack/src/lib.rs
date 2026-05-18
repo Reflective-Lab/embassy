@@ -30,11 +30,14 @@ pub struct Observation<T> {
 }
 
 pub fn content_hash(input: &str) -> String {
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
-    let mut hasher = DefaultHasher::new();
-    input.hash(&mut hasher);
-    format!("{:016x}", hasher.finish())
+    use sha2::{Digest, Sha256};
+    let mut hasher = Sha256::new();
+    hasher.update(input.as_bytes());
+    let bytes = hasher.finalize();
+    format!(
+        "{:016x}",
+        u64::from_be_bytes(bytes[..8].try_into().expect("slice is 8 bytes"))
+    )
 }
 
 #[cfg(test)]

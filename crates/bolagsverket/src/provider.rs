@@ -140,7 +140,10 @@ fn synthetic_org_number(request_hash: &str, idx: usize) -> OrgNumber {
     let base_nine = format!("{:09}", base_u64 % 1_000_000_000);
     let check = luhn_check_digit(&base_nine);
     let full = format!("{base_nine}{check}");
-    OrgNumber::parse(full).expect("synthetic org number must Luhn-validate by construction")
+    OrgNumber::parse(full).unwrap_or_else(|e| {
+        debug_assert!(false, "synthetic_org_number produced invalid OrgNumber: {e}");
+        unreachable!("synthetic OrgNumber construction invariant violated")
+    })
 }
 
 fn luhn_check_digit(base_nine: &str) -> u32 {
