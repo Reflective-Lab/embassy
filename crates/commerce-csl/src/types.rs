@@ -3,73 +3,12 @@
 
 //! Sanctions screening typed domain — Commerce CSL flavour.
 //!
-//! Shape ([`SanctionsSubject`] in, [`SanctionsHit`] out) is shared
-//! verbatim across the sanctions trio. Per-source quirks (the
-//! sub-list identifier — Entity List / DPL / UVL) ride in
-//! `list_program`.
+//! The shape ([`SanctionsSubject`] in, [`SanctionsHit`] out) and the
+//! supporting enums ([`MatchType`], [`SubjectType`]) are defined once in
+//! `embassy-pack` and re-exported here so callers importing from this
+//! crate continue to work without change.
 
-use serde::{Deserialize, Serialize};
-
-use crate::error::CommerceCslError;
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct SanctionsSubject {
-    pub name: String,
-    pub country: Option<String>,
-}
-
-impl SanctionsSubject {
-    pub fn parse(name: impl AsRef<str>) -> Result<Self, CommerceCslError> {
-        let name = name.as_ref().trim().to_string();
-        if name.is_empty() {
-            return Err(CommerceCslError::InvalidSubject("empty name".into()));
-        }
-        Ok(Self {
-            name,
-            country: None,
-        })
-    }
-
-    #[must_use]
-    pub fn with_country(mut self, country: impl Into<String>) -> Self {
-        self.country = Some(country.into());
-        self
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum MatchType {
-    Exact,
-    Fuzzy,
-    Alias,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SubjectType {
-    Individual,
-    Entity,
-    Vessel,
-    Aircraft,
-    Unknown,
-}
-
-/// One hit on a Commerce-aggregated screening list. `list_program`
-/// carries the originating sub-list (e.g., "BIS Entity List",
-/// "Denied Persons List", "Unverified List").
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct SanctionsHit {
-    pub subject_name: String,
-    pub match_score: f32,
-    pub match_type: MatchType,
-    pub subject_type: SubjectType,
-    pub list_name: String,
-    pub list_program: Option<String>,
-    pub listed_at: Option<String>,
-    pub aliases: Vec<String>,
-    pub jurisdictions: Vec<String>,
-}
+pub use embassy_pack::{MatchType, SanctionsHit, SanctionsSubject, SubjectType};
 
 #[cfg(test)]
 mod tests {
@@ -85,9 +24,12 @@ mod tests {
 
     #[test]
     fn hit_shape_matches_sister_ports() {
-        // Intent: serde key set on a SanctionsHit must be identical to
-        // ofac-sls and eu-sanctions so a Formation can fold hits
-        // across sources.
+        // Intent: all three sanctions ports (ofac-sls, eu-sanctions,
+        // commerce-csl) share the same SanctionsHit and SanctionsSubject
+        // types from embassy-pack. This test confirms the shared type is
+        // importable here and that a SanctionsHit can be constructed and
+        // serialized — the structural uniformity guarantee that lets
+        // Formations fold hits from multiple sources into one decision.
         let hit = SanctionsHit {
             subject_name: "BIS Listed Entity".into(),
             match_score: 0.95,
@@ -99,23 +41,10 @@ mod tests {
             aliases: vec![],
             jurisdictions: vec!["US".into()],
         };
-        let json = serde_json::to_value(&hit).unwrap();
-        let obj = json.as_object().unwrap();
-        for required in [
-            "subject_name",
-            "match_score",
-            "match_type",
-            "subject_type",
-            "list_name",
-            "list_program",
-            "listed_at",
-            "aliases",
-            "jurisdictions",
-        ] {
-            assert!(
-                obj.contains_key(required),
-                "sanctions-trio key `{required}` must be present"
-            );
-        }
+        // Confirm round-trip serialization works — the serde key set is
+        // guaranteed identical across the trio because it is the same type.
+        let json = serde_json::to_string(&hit).unwrap();
+        let back: SanctionsHit = serde_json::from_str(&json).unwrap();
+        assert_eq!(back, hit);
     }
 }

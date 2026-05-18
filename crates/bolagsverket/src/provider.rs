@@ -141,7 +141,10 @@ fn synthetic_org_number(request_hash: &str, idx: usize) -> OrgNumber {
     let check = luhn_check_digit(&base_nine);
     let full = format!("{base_nine}{check}");
     OrgNumber::parse(full).unwrap_or_else(|e| {
-        debug_assert!(false, "synthetic_org_number produced invalid OrgNumber: {e}");
+        debug_assert!(
+            false,
+            "synthetic_org_number produced invalid OrgNumber: {e}"
+        );
         unreachable!("synthetic OrgNumber construction invariant violated")
     })
 }
