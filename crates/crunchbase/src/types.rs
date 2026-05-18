@@ -11,23 +11,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::CrunchbaseError;
 
-/// The canonical identifier for this port's domain.
-///
-/// Crunchbase organization permalink format: lowercase slug `[a-z0-9-]+` with
-/// no leading hyphen, no trailing hyphen, and no consecutive hyphens.
-/// Input is normalized to lowercase before validation.
-/// Examples: `anthropic`, `openai`, `stripe`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct OrganizationId(String);
-
-impl OrganizationId {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, CrunchbaseError> {
-        let trimmed = raw.as_ref().trim();
-        if trimmed.is_empty() {
-            return Err(CrunchbaseError::InvalidIdentifier("empty".into()));
-        }
-        let s = trimmed.to_lowercase();
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// Crunchbase organization permalink format: lowercase slug `[a-z0-9-]+` with
+    /// no leading hyphen, no trailing hyphen, and no consecutive hyphens.
+    /// Input is normalized to lowercase before validation.
+    /// Examples: `anthropic`, `openai`, `stripe`.
+    OrganizationId, CrunchbaseError,
+    |s: &str| {
+        let s = s.to_lowercase();
+        let s = s.as_str();
         if s.starts_with('-') || s.ends_with('-') {
             return Err(CrunchbaseError::InvalidIdentifier(
                 "invalid OrganizationId: must not start or end with a hyphen".into(),
@@ -43,14 +37,9 @@ impl OrganizationId {
                 "invalid OrganizationId: consecutive hyphens ('--') are not allowed".into(),
             ));
         }
-        Ok(Self(s))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `permalink` + `name` pair is

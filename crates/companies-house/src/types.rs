@@ -11,21 +11,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::CompaniesHouseError;
 
-/// The canonical identifier for this port's domain.
-///
-/// Companies House company number format: either 8 ASCII digits (e.g.
-/// `12345678`) or a 2-letter uppercase prefix followed by 6 digits (e.g.
-/// `SC012345`, `NI000001`). Total length is always exactly 8 characters.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct CompanyNumber(String);
-
-impl CompanyNumber {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, CompaniesHouseError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(CompaniesHouseError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// Companies House company number format: either 8 ASCII digits (e.g.
+    /// `12345678`) or a 2-letter uppercase prefix followed by 6 digits (e.g.
+    /// `SC012345`, `NI000001`). Total length is always exactly 8 characters.
+    CompanyNumber, CompaniesHouseError,
+    |s: &str| {
         let is_all_digits = s.len() == 8 && s.chars().all(|c| c.is_ascii_digit());
         let is_prefixed = s.len() == 8
             && s[..2].chars().all(|c| c.is_ascii_uppercase())
@@ -35,14 +28,9 @@ impl CompanyNumber {
                 "invalid CompanyNumber: must be 8 digits or 2 uppercase letters followed by 6 digits".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `company_number` + `company_name` pair is

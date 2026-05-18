@@ -11,22 +11,15 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::UsptoError;
 
-/// The canonical identifier for this port's domain.
-///
-/// USPTO patent number format: `US` + 7-8 digits + 1-2 char kind code.
-/// More broadly: 2-letter uppercase country code + digits + 1-2 alphanumeric
-/// kind chars. Minimum total length: 9.
-/// Examples: `US10000001B2`, `US20230012345A1`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct PatentNumber(String);
-
-impl PatentNumber {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, UsptoError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(UsptoError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// USPTO patent number format: `US` + 7-8 digits + 1-2 char kind code.
+    /// More broadly: 2-letter uppercase country code + digits + 1-2 alphanumeric
+    /// kind chars. Minimum total length: 9.
+    /// Examples: `US10000001B2`, `US20230012345A1`.
+    PatentNumber, UsptoError,
+    |s: &str| {
         let chars: Vec<char> = s.chars().collect();
         // Minimum: 2 country + 6 digits + 1 kind = 9
         if chars.len() < 9 {
@@ -51,14 +44,9 @@ impl PatentNumber {
                 "invalid PatentNumber: kind code (last 1-2 chars) must be alphanumeric".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `patent_number` + `title` pair is

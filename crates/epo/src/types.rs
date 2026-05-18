@@ -11,21 +11,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::EpoError;
 
-/// The canonical identifier for this port's domain.
-///
-/// EPO publication number format: 2-letter country code (uppercase) +
-/// 6-12 digits + 1-2 alphanumeric kind code chars. Minimum total length: 9.
-/// Examples: `EP1234567A1`, `WO2023012345A1`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct EpoNumber(String);
-
-impl EpoNumber {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, EpoError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(EpoError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// EPO publication number format: 2-letter country code (uppercase) +
+    /// 6-12 digits + 1-2 alphanumeric kind code chars. Minimum total length: 9.
+    /// Examples: `EP1234567A1`, `WO2023012345A1`.
+    EpoNumber, EpoError,
+    |s: &str| {
         let chars: Vec<char> = s.chars().collect();
         // Minimum: 2 country + 6 digits + 1 kind = 9
         if chars.len() < 9 {
@@ -38,8 +31,6 @@ impl EpoNumber {
                 "invalid EpoNumber: must start with 2 uppercase country code letters (e.g. 'EP', 'WO', 'US')".into(),
             ));
         }
-        // Kind code: last 1-2 chars must be alphanumeric; at least 1 char before them must be digit
-        // Find where the trailing kind code begins (last 1 or 2 alphanumeric non-digit chars)
         let middle_and_kind = &chars[2..];
         // Require at least one digit in middle section
         if !middle_and_kind.iter().any(|c| c.is_ascii_digit()) {
@@ -53,14 +44,9 @@ impl EpoNumber {
                 "invalid EpoNumber: kind code (last 1-2 chars) must be alphanumeric".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `publication_number` + `title` pair is

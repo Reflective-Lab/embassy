@@ -11,32 +11,20 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::PubmedError;
 
-/// The canonical identifier for this port's domain.
-///
-/// Format: one or more ASCII digits, e.g. `38765432`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct Pmid(String);
-
-impl Pmid {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, PubmedError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(PubmedError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// Format: one or more ASCII digits, e.g. `38765432`.
+    Pmid, PubmedError,
+    |s: &str| {
         if !s.chars().all(|c| c.is_ascii_digit()) {
             return Err(PubmedError::InvalidIdentifier(
                 "invalid Pmid: must contain only ASCII digits".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `pmid` + `title` pair is

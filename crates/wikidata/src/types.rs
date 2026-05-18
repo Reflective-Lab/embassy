@@ -11,32 +11,20 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::WikidataError;
 
-/// The canonical identifier for this port's domain.
-///
-/// Format: `Q` followed by one or more ASCII digits, e.g. `Q42`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct QId(String);
-
-impl QId {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, WikidataError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(WikidataError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// Format: `Q` followed by one or more ASCII digits, e.g. `Q42`.
+    QId, WikidataError,
+    |s: &str| {
         if !s.starts_with('Q') || s.len() < 2 || !s[1..].chars().all(|c| c.is_ascii_digit()) {
             return Err(WikidataError::InvalidIdentifier(
                 "invalid QId: must be 'Q' followed by one or more digits".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `qid` + `label` pair is

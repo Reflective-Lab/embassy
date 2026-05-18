@@ -7,6 +7,7 @@
 //! call context. These types are the cross-port contract — independent of
 //! any specific external service.
 
+pub mod macros;
 pub mod sanctions;
 pub use sanctions::{MatchType, SanctionsHit, SanctionsSubject, SubjectType};
 

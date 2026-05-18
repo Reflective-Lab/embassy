@@ -11,21 +11,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::GithubError;
 
-/// The canonical identifier for this port's domain.
-///
-/// GitHub organization slug format: `[a-zA-Z0-9-]+` with no leading hyphen,
-/// no trailing hyphen, and no consecutive hyphens (`--`).
-/// Examples: `rust-lang`, `microsoft`, `anthropics`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct OrgSlug(String);
-
-impl OrgSlug {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, GithubError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(GithubError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// GitHub organization slug format: `[a-zA-Z0-9-]+` with no leading hyphen,
+    /// no trailing hyphen, and no consecutive hyphens (`--`).
+    /// Examples: `rust-lang`, `microsoft`, `anthropics`.
+    OrgSlug, GithubError,
+    |s: &str| {
         if s.starts_with('-') || s.ends_with('-') {
             return Err(GithubError::InvalidIdentifier(
                 "invalid OrgSlug: must not start or end with a hyphen".into(),
@@ -41,14 +34,9 @@ impl OrgSlug {
                 "invalid OrgSlug: consecutive hyphens ('--') are not allowed".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `login` + `html_url` pair is

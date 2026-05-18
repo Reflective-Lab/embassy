@@ -11,21 +11,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::OpenAlexError;
 
-/// The canonical identifier for this port's domain.
-///
-/// Format: one of `W` (work), `A` (author), `I` (institution), `S` (source),
-/// `C` (concept), `P` (publisher), `F` (funder) followed by ASCII digits.
-/// Examples: `W2741809807`, `A5023888391`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct OpenAlexId(String);
-
-impl OpenAlexId {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, OpenAlexError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(OpenAlexError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// Format: one of `W` (work), `A` (author), `I` (institution), `S` (source),
+    /// `C` (concept), `P` (publisher), `F` (funder) followed by ASCII digits.
+    /// Examples: `W2741809807`, `A5023888391`.
+    OpenAlexId, OpenAlexError,
+    |s: &str| {
         let first = s
             .chars()
             .next()
@@ -40,14 +33,9 @@ impl OpenAlexId {
                 "invalid OpenAlexId: entity type prefix must be followed by one or more digits".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `id` + `title` pair is

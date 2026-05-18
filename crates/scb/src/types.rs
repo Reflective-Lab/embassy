@@ -11,27 +11,20 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::ScbError;
 
-/// The canonical identifier for this port's domain.
-///
-/// SCB (Statistics Sweden) table ID format observed in the API:
-/// 2 uppercase letters + 4 digits + 1-3 uppercase letters + digits.
-/// Pattern: `[A-Z]{2}[0-9]{4}[A-Z]{1,3}[0-9]+`. Minimum length: 8.
-/// Examples: `BE0101A1`, `NV0119K1`, `AM0401A`.
-///
-/// Note: the digit suffix length varies (1-2 observed in the wild). The
-/// validation below checks structural requirements — starts with 2 uppercase
-/// letters, followed by 4 digits, followed by 1+ uppercase letters, followed
-/// by 1+ digits — without constraining exact suffix length.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct TableId(String);
-
-impl TableId {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, ScbError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(ScbError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// SCB (Statistics Sweden) table ID format observed in the API:
+    /// 2 uppercase letters + 4 digits + 1-3 uppercase letters + digits.
+    /// Pattern: `[A-Z]{2}[0-9]{4}[A-Z]{1,3}[0-9]+`. Minimum length: 8.
+    /// Examples: `BE0101A1`, `NV0119K1`, `AM0401A`.
+    ///
+    /// Note: the digit suffix length varies (1-2 observed in the wild). The
+    /// validation below checks structural requirements — starts with 2 uppercase
+    /// letters, followed by 4 digits, followed by 1+ uppercase letters, followed
+    /// by 1+ digits — without constraining exact suffix length.
+    TableId, ScbError,
+    |s: &str| {
         if s.len() < 8 {
             return Err(ScbError::InvalidIdentifier(
                 "invalid TableId: too short; expected at least 8 characters (e.g. 'BE0101A1')".into(),
@@ -64,14 +57,9 @@ impl TableId {
                 "invalid TableId: expected digits after the subtable letter(s)".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `table_id` + `title` pair is

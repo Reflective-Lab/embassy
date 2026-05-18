@@ -11,18 +11,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::ArxivError;
 
-/// The canonical identifier for this port's domain.
-///
-/// Two accepted formats:
-/// - New-style: `YYMM.NNNNN[vN]` — 4-digit year+month, dot, 4-5 digits,
-///   optional version suffix `v` followed by digits. Example: `2301.00001` or
-///   `2301.00001v2`.
-/// - Old-style: `<archive>/<YYMMNNN>` — alphabetic archive prefix, slash,
-///   7 digits. Example: `hep-th/9901001`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct ArxivId(String);
-
 fn is_new_style(s: &str) -> bool {
     if let Some((prefix, rest)) = s.split_once('.') {
         if prefix.len() == 4 && prefix.chars().all(|c| c.is_ascii_digit()) {
@@ -50,25 +38,25 @@ fn is_old_style(s: &str) -> bool {
     false
 }
 
-impl ArxivId {
-    pub fn parse(raw: impl AsRef<str>) -> Result<Self, ArxivError> {
-        let s = raw.as_ref().trim();
-        if s.is_empty() {
-            return Err(ArxivError::InvalidIdentifier("empty".into()));
-        }
+embassy_pack::simple_id!(
+    /// The canonical identifier for this port's domain.
+    ///
+    /// Two accepted formats:
+    /// - New-style: `YYMM.NNNNN[vN]` — 4-digit year+month, dot, 4-5 digits,
+    ///   optional version suffix `v` followed by digits. Example: `2301.00001` or
+    ///   `2301.00001v2`.
+    /// - Old-style: `<archive>/<YYMMNNN>` — alphabetic archive prefix, slash,
+    ///   7 digits. Example: `hep-th/9901001`.
+    ArxivId, ArxivError,
+    |s: &str| {
         if !is_new_style(s) && !is_old_style(s) {
             return Err(ArxivError::InvalidIdentifier(
                 "invalid ArxivId: expected new-style 'YYMM.NNNNN[vN]' or old-style 'archive/YYMMNNN'".into(),
             ));
         }
-        Ok(Self(s.to_string()))
+        Ok(s.to_string())
     }
-
-    #[must_use]
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
+);
 
 /// Placeholder typed entity. Replace with real per-service fields when
 /// an app needs them; the `arxiv_id` + `title` pair is
