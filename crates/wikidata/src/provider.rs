@@ -93,7 +93,7 @@ mod tests {
         // request). Same load-bearing guarantee as every other port.
         let provider = StubWikidataProvider;
         let req = WikidataRequest::Lookup {
-            identifier: QId::parse("STUB-001").unwrap(),
+            identifier: QId::parse("Q42").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         let expected = content_hash(&serde_json::to_string(&req).unwrap());
@@ -104,7 +104,7 @@ mod tests {
     async fn stub_returns_one_observation() {
         let provider = StubWikidataProvider;
         let req = WikidataRequest::Lookup {
-            identifier: QId::parse("STUB-001").unwrap(),
+            identifier: QId::parse("Q42").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         assert_eq!(resp.records.len(), 1);

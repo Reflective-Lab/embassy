@@ -93,7 +93,7 @@ mod tests {
         // request). Same load-bearing guarantee as every other port.
         let provider = StubArxivProvider;
         let req = ArxivRequest::Lookup {
-            identifier: ArxivId::parse("STUB-001").unwrap(),
+            identifier: ArxivId::parse("2301.00001").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         let expected = content_hash(&serde_json::to_string(&req).unwrap());
@@ -104,7 +104,7 @@ mod tests {
     async fn stub_returns_one_observation() {
         let provider = StubArxivProvider;
         let req = ArxivRequest::Lookup {
-            identifier: ArxivId::parse("STUB-001").unwrap(),
+            identifier: ArxivId::parse("2301.00001").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         assert_eq!(resp.records.len(), 1);

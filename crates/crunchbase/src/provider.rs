@@ -94,7 +94,7 @@ mod tests {
         // request). Same load-bearing guarantee as every other port.
         let provider = StubCrunchbaseProvider;
         let req = CrunchbaseRequest::Lookup {
-            identifier: OrganizationId::parse("STUB-001").unwrap(),
+            identifier: OrganizationId::parse("anthropic").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         let expected = content_hash(&serde_json::to_string(&req).unwrap());
@@ -105,7 +105,7 @@ mod tests {
     async fn stub_returns_one_observation() {
         let provider = StubCrunchbaseProvider;
         let req = CrunchbaseRequest::Lookup {
-            identifier: OrganizationId::parse("STUB-001").unwrap(),
+            identifier: OrganizationId::parse("anthropic").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         assert_eq!(resp.records.len(), 1);

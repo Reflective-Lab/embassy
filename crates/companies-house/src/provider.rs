@@ -94,7 +94,7 @@ mod tests {
         // request). Same load-bearing guarantee as every other port.
         let provider = StubCompaniesHouseProvider;
         let req = CompaniesHouseRequest::Lookup {
-            identifier: CompanyNumber::parse("STUB-001").unwrap(),
+            identifier: CompanyNumber::parse("12345678").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         let expected = content_hash(&serde_json::to_string(&req).unwrap());
@@ -105,7 +105,7 @@ mod tests {
     async fn stub_returns_one_observation() {
         let provider = StubCompaniesHouseProvider;
         let req = CompaniesHouseRequest::Lookup {
-            identifier: CompanyNumber::parse("STUB-001").unwrap(),
+            identifier: CompanyNumber::parse("12345678").unwrap(),
         };
         let resp = provider.fetch(&req, &CallContext::default()).await.unwrap();
         assert_eq!(resp.records.len(), 1);

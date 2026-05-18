@@ -12,17 +12,24 @@ use serde::{Deserialize, Serialize};
 use crate::error::WikidataError;
 
 /// The canonical identifier for this port's domain.
+///
+/// Format: `Q` followed by one or more ASCII digits, e.g. `Q42`.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct QId(String);
 
 impl QId {
     pub fn parse(raw: impl AsRef<str>) -> Result<Self, WikidataError> {
-        let raw = raw.as_ref().trim();
-        if raw.is_empty() {
+        let s = raw.as_ref().trim();
+        if s.is_empty() {
             return Err(WikidataError::InvalidIdentifier("empty".into()));
         }
-        Ok(Self(raw.to_string()))
+        if !s.starts_with('Q') || s.len() < 2 || !s[1..].chars().all(|c| c.is_ascii_digit()) {
+            return Err(WikidataError::InvalidIdentifier(
+                "invalid QId: must be 'Q' followed by one or more digits".into(),
+            ));
+        }
+        Ok(Self(s.to_string()))
     }
 
     #[must_use]
@@ -54,12 +61,37 @@ mod tests {
     }
 
     #[test]
+    fn valid_qid_parses() {
+        // Intent: a well-formed Wikidata entity ID must round-trip cleanly
+        // so downstream consumers receive the canonical string they passed in.
+        assert_eq!(QId::parse("Q42").unwrap().as_str(), "Q42");
+        assert_eq!(QId::parse("Q12345").unwrap().as_str(), "Q12345");
+    }
+
+    #[test]
+    fn invalid_qid_rejected() {
+        // Intent: the type boundary must reject IDs that don't match the
+        // documented Q<digits> format, preventing garbage from entering
+        // the audit log or being forwarded to Wikidata's API.
+        assert!(QId::parse("q42").is_err());     // lowercase q
+        assert!(QId::parse("P42").is_err());     // wrong prefix (property)
+        assert!(QId::parse("Q42x").is_err());    // non-digit suffix
+    }
+
+    #[test]
+    fn qid_with_no_digits_rejected() {
+        // Intent: "Q" alone must not be accepted — the digit portion is
+        // mandatory to form a resolvable Wikidata entity URI.
+        assert!(QId::parse("Q").is_err());
+    }
+
+    #[test]
     fn entity_serde_round_trips() {
         // Intent: payloads ride serde across the kernel boundary;
         // a regression would block Formation composition.
         let e = Entity {
-            qid: QId::parse("STUB-001").unwrap(),
-            label: "Stub Entity".into(),
+            qid: QId::parse("Q42").unwrap(),
+            label: "Douglas Adams".into(),
         };
         let json = serde_json::to_string(&e).unwrap();
         let back: Entity = serde_json::from_str(&json).unwrap();

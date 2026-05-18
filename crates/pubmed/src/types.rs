@@ -12,17 +12,24 @@ use serde::{Deserialize, Serialize};
 use crate::error::PubmedError;
 
 /// The canonical identifier for this port's domain.
+///
+/// Format: one or more ASCII digits, e.g. `38765432`.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
 pub struct Pmid(String);
 
 impl Pmid {
     pub fn parse(raw: impl AsRef<str>) -> Result<Self, PubmedError> {
-        let raw = raw.as_ref().trim();
-        if raw.is_empty() {
+        let s = raw.as_ref().trim();
+        if s.is_empty() {
             return Err(PubmedError::InvalidIdentifier("empty".into()));
         }
-        Ok(Self(raw.to_string()))
+        if !s.chars().all(|c| c.is_ascii_digit()) {
+            return Err(PubmedError::InvalidIdentifier(
+                "invalid Pmid: must contain only ASCII digits".into(),
+            ));
+        }
+        Ok(Self(s.to_string()))
     }
 
     #[must_use]
@@ -54,12 +61,30 @@ mod tests {
     }
 
     #[test]
+    fn valid_pmid_parses() {
+        // Intent: a well-formed PubMed ID must round-trip cleanly so
+        // downstream consumers receive the canonical string they passed in.
+        assert_eq!(Pmid::parse("38765432").unwrap().as_str(), "38765432");
+        assert_eq!(Pmid::parse("1").unwrap().as_str(), "1");
+    }
+
+    #[test]
+    fn invalid_pmid_rejected() {
+        // Intent: PMIDs are purely numeric; any non-digit character is a
+        // sign the caller has the wrong format and must be rejected at
+        // the boundary before it reaches PubMed's API.
+        assert!(Pmid::parse("PMID38765432").is_err());  // text prefix
+        assert!(Pmid::parse("38765 432").is_err());     // internal space
+        assert!(Pmid::parse("387abc").is_err());        // letters mixed in
+    }
+
+    #[test]
     fn entity_serde_round_trips() {
         // Intent: payloads ride serde across the kernel boundary;
         // a regression would block Formation composition.
         let e = Article {
-            pmid: Pmid::parse("STUB-001").unwrap(),
-            title: "Stub Entity".into(),
+            pmid: Pmid::parse("38765432").unwrap(),
+            title: "Stub Article".into(),
         };
         let json = serde_json::to_string(&e).unwrap();
         let back: Article = serde_json::from_str(&json).unwrap();
