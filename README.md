@@ -26,8 +26,10 @@ creates customer or partner obligations, the owning business layer must define
 the command surface and policy. Embassy may still provide source-faithful
 observations, but it must not own the business action.
 
-Cargo packages: `converge-embassy-pack` and `converge-embassy-linkedin`. Rust
-library names remain `embassy_pack` and `embassy_linkedin`.
+Cargo packages include `converge-embassy-pack`, `converge-embassy-linkedin`,
+and the source-specific ports under `crates/*`. Rust library names keep the
+`embassy_*` form, for example `embassy_pack`, `embassy_linkedin`, and
+`embassy_sec_edgar`.
 
 ## Why It Exists
 
@@ -42,6 +44,8 @@ generic provider interface.
 - Source-specific request and response types.
 - Source-specific provider traits.
 - Stub providers for deterministic tests.
+- Concrete live providers behind feature flags when a source contract is ready
+  to carry network observations through the provider trait.
 
 ## What Embassy Does Not Own
 
@@ -80,6 +84,10 @@ crates/pack/
 
 crates/linkedin/
   src/lib.rs       LinkedInProvider, request/response types, stub provider
+
+crates/sec-edgar/
+  src/lib.rs       SecEdgarProvider, typed filing domain, stub provider
+  src/live.rs      LiveSecEdgarProvider behind the live feature
 ```
 
 Future ports should follow the same shape: source-specific contract first,

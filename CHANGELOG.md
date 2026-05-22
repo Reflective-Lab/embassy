@@ -4,6 +4,14 @@ All notable changes to embassy will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- `embassy-sec-edgar` now exposes `LiveSecEdgarProvider` behind the `live`
+  feature. The live provider resolves SEC filing metadata, fetches the primary
+  document, embeds Item 1A for 10-K filings into `Filing.sections`, and returns
+  typed `Observation<Filing>` records through the same `SecEdgarProvider` trait
+  used by the deterministic stub.
+
 ## [1.3.0] - 2026-05-17
 
 ### Added

@@ -7,6 +7,7 @@ Append an entry on every kb/ change. Format mirrors converge.
 
 | Date | File | Change | Author |
 |------|------|--------|--------|
+| 2026-05-22 | crates/sec-edgar/src/live.rs, crates/sec-edgar/src/lib.rs, README.md, CHANGELOG.md, History/CHANGELOG.md | Add provider-shaped live SEC EDGAR access via `LiveSecEdgarProvider`, returning typed `Observation<Filing>` records through `SecEdgarProvider` | llm |
 | 2026-05-17 | Architecture/Operating Authority Boundary.md | Added the evidence-vs-operating-authority boundary for Embassy | mixed |
 | 2026-05-17 | Architecture/Surface.md | Clarified Embassy's evidence-oriented public surface and forbidden ownership | mixed |
 | 2026-05-17 | Home.md, INDEX.md | Linked the operating authority boundary page | mixed |

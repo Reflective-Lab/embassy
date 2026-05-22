@@ -25,10 +25,9 @@
 //! Today the port ships:
 //! - `StubSecEdgarProvider` — deterministic, no network, for unit tests
 //!   and CI
-//!
-//! Live provider deferred behind a feature in a follow-on release; the
-//! contract here is the stable surface every implementation will
-//! satisfy.
+//! - `LiveSecEdgarProvider` — behind the `live` feature; fetches SEC
+//!   EDGAR over HTTP and returns typed observations through the same
+//!   provider trait.
 
 mod error;
 #[cfg(feature = "live")]
@@ -41,6 +40,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::SecEdgarError;
+#[cfg(feature = "live")]
+pub use live::LiveSecEdgarProvider;
 pub use provenance::{SEC_EDGAR_PROVENANCE, SecEdgar};
 pub use provider::{SecEdgarProvider, SecEdgarRequest, SecEdgarResponse, StubSecEdgarProvider};
 pub use suggestor::{SecFilingPayload, SecFilingSuggestor};

@@ -5,6 +5,17 @@ source: mixed
 
 All notable changes to `embassy-ports` are recorded here.
 
+## [Unreleased]
+
+### Added
+
+- `embassy-sec-edgar` now exposes `LiveSecEdgarProvider` behind the `live`
+  feature. It resolves SEC filing metadata, fetches the primary document,
+  stores Item 1A for 10-K filings in `Filing.sections`, and returns typed
+  `Observation<Filing>` records through the same `SecEdgarProvider` trait used
+  by the deterministic stub. This was pulled by atelier's
+  `scenario-sec-edgar-live-filing` proof slice.
+
 ## [1.3.0] — 2026-05-17
 
 ### Added
