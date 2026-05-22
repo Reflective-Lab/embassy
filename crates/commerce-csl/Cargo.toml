@@ -22,6 +22,18 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport. api.trade.gov CSL endpoint requires an
+# api_key (free registration). The `live` feature defaults to
+# OpenSanctions' mirror (CC-BY 4.0, no auth); consumers with a
+# trade.gov api_key can point at the canonical endpoint via
+# LiveFetchOptions::sanctions_url.
+manifold = { workspace = true, optional = true, features = ["fetch"] }
+tokio = { workspace = true, optional = true, features = ["sync"] }
+
+[features]
+default = []
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 

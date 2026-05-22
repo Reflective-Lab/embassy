@@ -22,6 +22,17 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport. EU's canonical FSF requires EU-Login; the
+# `live` feature defaults to OpenSanctions' mirror of the EU FSF
+# (CC-BY 4.0, no auth). Apps with EU credentials can point at the
+# canonical endpoint via `LiveFetchOptions::sanctions_url`.
+manifold = { workspace = true, optional = true, features = ["fetch"] }
+tokio = { workspace = true, optional = true, features = ["sync"] }
+
+[features]
+default = []
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 

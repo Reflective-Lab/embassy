@@ -22,6 +22,17 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport for api.usaspending.gov. No auth required.
+manifold = { workspace = true, optional = true, features = ["fetch"] }
+tokio = { workspace = true, optional = true }
+
+[features]
+default = []
+# Bring in the live USAspending transport: HTTP fetch + JSON parse
+# against https://api.usaspending.gov/api/v2/awards/{award_id}/.
+# Federal-spend data is open by statute; no auth required.
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 

@@ -22,9 +22,16 @@
 //!
 //! ## Status
 //!
-//! **Skeleton only** — stub returns deterministic synthetic hits.
+//! Both stub and live providers ship. Default-features builds get the
+//! typed domain + [`StubEuSanctionsProvider`]. Building with
+//! `--features live` adds [`LiveEuSanctionsProvider`] which fetches
+//! the OpenSanctions mirror of the EU FSF (CC-BY 4.0, no auth) —
+//! consumers with EU-Login credentials can point at the canonical
+//! source via `LiveFetchOptions::sanctions_url`.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -33,6 +40,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::EuSanctionsError;
+#[cfg(feature = "live")]
+pub use live::LiveEuSanctionsProvider;
 pub use provenance::{EU_SANCTIONS_PROVENANCE, EuSanctions};
 pub use provider::{
     EuSanctionsProvider, EuSanctionsRequest, EuSanctionsResponse, StubEuSanctionsProvider,

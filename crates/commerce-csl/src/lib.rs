@@ -23,9 +23,15 @@
 //!
 //! ## Status
 //!
-//! **Skeleton only** — stub returns deterministic synthetic hits.
+//! Both stub and live providers ship. The `live` feature pulls
+//! [`LiveCommerceCslProvider`] which fetches the OpenSanctions mirror
+//! of the CSL (CC-BY 4.0, no auth); consumers with a trade.gov
+//! api_key can point at the canonical endpoint via
+//! `LiveFetchOptions::sanctions_url`.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -34,6 +40,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::CommerceCslError;
+#[cfg(feature = "live")]
+pub use live::LiveCommerceCslProvider;
 pub use provenance::{COMMERCE_CSL_PROVENANCE, CommerceCsl};
 pub use provider::{
     CommerceCslProvider, CommerceCslRequest, CommerceCslResponse, StubCommerceCslProvider,

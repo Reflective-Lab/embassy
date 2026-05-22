@@ -22,9 +22,14 @@
 //!
 //! ## Status
 //!
-//! **Skeleton only** — stub returns deterministic synthetic awards.
+//! Both stub and live providers ship. Default-features builds get the
+//! typed domain + [`StubUsaspendingProvider`]. Building with
+//! `--features live` adds [`LiveUsaspendingProvider`] which calls
+//! `https://api.usaspending.gov/api/v2/awards/{award_id}/` — no auth.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -33,6 +38,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::UsaspendingError;
+#[cfg(feature = "live")]
+pub use live::LiveUsaspendingProvider;
 pub use provenance::{USASPENDING_PROVENANCE, Usaspending};
 pub use provider::{
     StubUsaspendingProvider, UsaspendingProvider, UsaspendingRequest, UsaspendingResponse,
