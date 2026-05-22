@@ -25,12 +25,15 @@
 //!
 //! ## Status
 //!
-//! **Skeleton only.** The typed domain locks in the canonical
-//! [`SanctionsSubject`] + [`SanctionsHit`] shape and the
-//! [`StubOfacSlsProvider`] returns deterministic synthetic hits so
-//! Formations can wire today. Live HTTP/API integration deferred.
+//! Both stub and live providers ship. Default-features builds get the
+//! typed domain + [`StubOfacSlsProvider`]. Building with `--features
+//! live` adds [`LiveOfacSlsProvider`] which downloads the canonical
+//! OFAC SDN CSV from US Treasury (no auth required) and screens
+//! submitted subjects by exact / substring name match.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -39,6 +42,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::OfacSlsError;
+#[cfg(feature = "live")]
+pub use live::LiveOfacSlsProvider;
 pub use provenance::{OFAC_SLS_PROVENANCE, OfacSls};
 pub use provider::{OfacSlsProvider, OfacSlsRequest, OfacSlsResponse, StubOfacSlsProvider};
 pub use suggestor::{OfacSlsHitPayload, OfacSlsLookupSuggestor};

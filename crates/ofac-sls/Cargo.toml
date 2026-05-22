@@ -22,6 +22,22 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport for the OFAC SDN CSV feed. Same pattern as
+# sec-edgar / gleif: only pulled in when the `live` feature is
+# enabled.
+manifold = { workspace = true, optional = true, features = ["fetch"] }
+tokio = { workspace = true, optional = true, features = ["sync"] }
+
+[features]
+default = []
+# Bring in the live OFAC SDN transport: HTTP fetch of the published
+# CSV feed at
+# https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/SDN.CSV
+# (no auth required; US Treasury publishes the SDN as public
+# information). Tests use canned CSV fixtures; integration test is
+# `#[ignore]` and only runs with OFAC_LIVE_TEST=1.
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 
