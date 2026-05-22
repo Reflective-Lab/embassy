@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::SamGovError;
 use crate::types::{ContractorRegistration, RegistrationStatus, Uei};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum SamGovRequest {
     Lookup { uei: Uei },

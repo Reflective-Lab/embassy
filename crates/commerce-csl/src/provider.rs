@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::CommerceCslError;
 use crate::types::{MatchType, SanctionsHit, SanctionsSubject, SubjectType};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum CommerceCslRequest {
     Screen { subject: SanctionsSubject },

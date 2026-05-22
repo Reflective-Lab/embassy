@@ -19,7 +19,7 @@ use crate::types::{MemberStateStatus, VatNumber, VatValidation};
 /// What a caller asks for. VIES is single-purpose: validate one VAT
 /// number. The Request enum keeps the variant-tagged shape every other
 /// embassy port uses so Formations can dispatch uniformly.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum ViesRequest {
     Validate { vat_number: VatNumber },

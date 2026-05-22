@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::TedError;
 use crate::types::{ProcurementNotice, ProcurementType, TedNoticeId};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum TedRequest {
     Lookup { notice_id: TedNoticeId },

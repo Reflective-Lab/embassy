@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::GithubError;
 use crate::types::{OrgSlug, Organization};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum GithubRequest {
     Lookup { identifier: OrgSlug },

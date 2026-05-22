@@ -26,7 +26,7 @@ use crate::types::{AccessionNumber, Cik, Filing, FilingSection, FormType};
 /// request kind without parsing a free-form spec. Carries a
 /// [`FactPayload`] impl so a `SecEdgarRequest` can ride the kernel as
 /// a `Seeds` fact, which is what [`crate::SecFilingSuggestor`] consumes.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum SecEdgarRequest {
     Filing {

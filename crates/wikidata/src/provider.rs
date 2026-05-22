@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::WikidataError;
 use crate::types::{Entity, QId};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum WikidataRequest {
     Lookup { identifier: QId },

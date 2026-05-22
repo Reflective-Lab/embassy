@@ -19,7 +19,7 @@ use crate::types::{Address, Company, CompanyStatus, LegalForm, OrgNumber};
 /// What a caller asks for. Two shapes:
 /// - `Lookup` — fetch a single company by org number
 /// - `SearchByName` — fuzzy-match registered companies by name fragment
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum BolagsverketRequest {
     Lookup { org_number: OrgNumber },

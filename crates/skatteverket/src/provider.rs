@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::SkatteverketError;
 use crate::types::{SwedishOrgNumber, SwedishTaxStatus};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum SkatteverketRequest {
     /// Query the public tax-administrative status of a Swedish

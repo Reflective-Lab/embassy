@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::CrunchbaseError;
 use crate::types::{Organization, OrganizationId};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum CrunchbaseRequest {
     Lookup { identifier: OrganizationId },

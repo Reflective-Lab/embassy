@@ -23,7 +23,7 @@ use crate::types::{EntityCategory, LegalEntity, LegalEntityStatus, Lei, Registra
 ///
 /// Each shape is its own variant so a Formation can dispatch on the
 /// request kind without parsing a free-form spec.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum GleifRequest {
     Lookup {
