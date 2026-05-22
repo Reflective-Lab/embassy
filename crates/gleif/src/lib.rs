@@ -36,11 +36,18 @@
 //!
 //! ## Status
 //!
-//! Stub provider only. Live HTTP against
-//! `https://api.gleif.org/api/v1/lei-records/{lei}` deferred to a
-//! `live` feature in a follow-on when a real app pulls.
+//! Both stub and live providers ship. Default-features builds get the
+//! typed domain + [`StubGleifProvider`]. Building with `--features
+//! live` adds [`LiveGleifProvider`] which calls the free public GLEIF
+//! API at `https://api.gleif.org/api/v1/lei-records/{lei}` — no auth
+//! required (GLEIF data is CC0). Per the REAL-by-default standard at
+//! `~/dev/reflective/stack/mosaic-extensions/kb/Standards/Real-by-Default Connections.md`,
+//! apps that need real evidence should opt into the `live` feature and
+//! use [`LiveGleifProvider`]; the stub is for tests and harnesses.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -49,6 +56,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::GleifError;
+#[cfg(feature = "live")]
+pub use live::LiveGleifProvider;
 pub use provenance::{GLEIF_PROVENANCE, Gleif};
 pub use provider::{GleifProvider, GleifRequest, GleifResponse, StubGleifProvider};
 pub use suggestor::{GleifLegalEntityPayload, GleifLookupSuggestor};

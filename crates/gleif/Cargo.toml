@@ -22,6 +22,21 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport — only pulled in when the `live` feature is
+# enabled. Stub-only consumers (CI loops, formation harnesses, unit
+# tests) see no manifold/tokio surface. Same pattern as sec-edgar's
+# `live` feature.
+manifold = { workspace = true, optional = true, features = ["fetch"] }
+tokio = { workspace = true, optional = true }
+
+[features]
+default = []
+# Bring in the live GLEIF transport: HTTP fetch + JSON:API parse against
+# the free public endpoint at https://api.gleif.org/api/v1/lei-records.
+# No auth required (GLEIF data is CC0). Tests for this feature use
+# canned JSON fixtures — no network in CI.
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 
