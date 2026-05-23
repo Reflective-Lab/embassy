@@ -180,7 +180,9 @@ async fn fetch_json(url: &str, opts: &LiveFetchOptions) -> Result<Vec<u8>, LiveE
     let url = url.to_string();
     let opts = opts.clone();
     tokio::task::spawn_blocking(move || {
-        let provider = HttpFetchProvider::new().with_user_agent(&opts.user_agent);
+        let provider = HttpFetchProvider::new()
+            .map_err(|e| LiveError::Fetch(e.to_string()))?
+            .with_user_agent(&opts.user_agent);
         let request = WebFetchRequest::new(&url)
             .map_err(|e| LiveError::Fetch(e.to_string()))?
             .with_max_bytes(opts.max_bytes)

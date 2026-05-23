@@ -94,3 +94,10 @@ wildcard_imports = "allow"
 opt-level = 3
 lto = true
 codegen-units = 1
+
+# Resolve manifold from local source until the crates.io release that
+# carries the POST + xml feature additions (search.rs WebFetchMethod /
+# WebFetchRequest::with_body / manifold::xml) lands. Drop this patch
+# once that release is on crates.io.
+[patch.crates-io]
+converge-manifold-adapters = { path = "../manifold-adapters/crates/manifold" }

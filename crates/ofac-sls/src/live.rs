@@ -251,7 +251,9 @@ fn live_error(err: LiveError) -> OfacSlsError {
 async fn fetch_sdn(opts: &LiveFetchOptions) -> Result<String, LiveError> {
     let opts = opts.clone();
     tokio::task::spawn_blocking(move || {
-        let provider = HttpFetchProvider::new().with_user_agent(&opts.user_agent);
+        let provider = HttpFetchProvider::new()
+            .map_err(|e| LiveError::Fetch(e.to_string()))?
+            .with_user_agent(&opts.user_agent);
         let request = WebFetchRequest::new(&opts.sdn_url)
             .map_err(|e| LiveError::Fetch(e.to_string()))?
             .with_max_bytes(opts.max_bytes)

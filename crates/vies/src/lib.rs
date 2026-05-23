@@ -32,11 +32,16 @@
 //!
 //! ## Status
 //!
-//! Stub provider only. Live SOAP against
+//! Both stub and live providers ship. Default-features builds get the
+//! typed domain + [`StubViesProvider`]. Building with `--features
+//! live` adds [`LiveViesProvider`] which POSTs the SOAP envelope to
 //! `https://ec.europa.eu/taxation_customs/vies/services/checkVatService`
-//! deferred behind a future `live` feature.
+//! — no auth required. Uses manifold's POST + XML helpers (added in
+//! manifold v1.1.2) to keep the SOAP wiring tight and dependency-light.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -45,6 +50,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::ViesError;
+#[cfg(feature = "live")]
+pub use live::LiveViesProvider;
 pub use provenance::{VIES_PROVENANCE, Vies};
 pub use provider::{StubViesProvider, ViesProvider, ViesRequest, ViesResponse};
 pub use suggestor::{ViesLookupSuggestor, ViesValidationPayload};

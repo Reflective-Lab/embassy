@@ -22,6 +22,17 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live SOAP transport — manifold's POST + XML helpers. No auth
+# required for the EU VIES endpoint. chrono is used only to stamp the
+# RFC3339 `validated_at` field on each typed result.
+manifold = { workspace = true, optional = true, features = ["fetch", "xml"] }
+tokio = { workspace = true, optional = true }
+chrono = { version = "0.4", default-features = false, features = ["clock"], optional = true }
+
+[features]
+default = []
+live = ["dep:manifold", "dep:tokio", "dep:chrono"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 
