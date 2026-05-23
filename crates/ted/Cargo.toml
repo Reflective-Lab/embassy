@@ -22,6 +22,16 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport — manifold's POST + pagination helpers. TED
+# search uses cursor-based pagination via `iterationNextToken`; the
+# pagination feature in manifold lands here.
+manifold = { workspace = true, optional = true, features = ["fetch", "pagination"] }
+tokio = { workspace = true, optional = true }
+
+[features]
+default = []
+live = ["dep:manifold", "dep:tokio"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 

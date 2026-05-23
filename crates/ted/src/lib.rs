@@ -20,9 +20,17 @@
 //!
 //! ## Status
 //!
-//! **Skeleton only** — stub returns deterministic synthetic notices.
+//! Both stub and live providers ship. The `live` feature adds
+//! [`LiveTedProvider`] which calls the TED v3 search endpoint and
+//! follows the cursor-paginated `iterationNextToken` chain via
+//! [`manifold::pagination::paginate`] until the caller's `limit` is
+//! met. No auth required; rate limit is per-IP. The search endpoint
+//! URL is configurable via `live::LiveFetchOptions::search_url` since
+//! TED has moved the path across releases.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -31,6 +39,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::TedError;
+#[cfg(feature = "live")]
+pub use live::LiveTedProvider;
 pub use provenance::{TED_PROVENANCE, Ted};
 pub use provider::{StubTedProvider, TedProvider, TedRequest, TedResponse};
 pub use suggestor::{TedLookupSuggestor, TedNoticePayload};
