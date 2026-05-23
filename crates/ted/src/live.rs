@@ -706,14 +706,14 @@ mod tests {
         // strings. The helper must descend into them rather than
         // returning empty.
         let multilang = serde_json::json!({"eng": "english title", "swe": "svensk titel"});
-        let s = first_string(&Some(multilang));
+        let s = first_string(Some(&multilang));
         // Order in JSON object is preserved in serde_json's Map; the
         // first key inserted ("eng") is returned.
         assert_eq!(s.as_deref(), Some("english title"));
 
         let array = serde_json::json!(["", "first non-empty"]);
         assert_eq!(
-            first_string(&Some(array)).as_deref(),
+            first_string(Some(&array)).as_deref(),
             Some("first non-empty")
         );
     }
