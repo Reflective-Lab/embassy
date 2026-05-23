@@ -25,9 +25,17 @@
 //!
 //! ## Status
 //!
-//! **Skeleton only** — stub returns deterministic synthetic records.
+//! Both stub and live providers ship. Default-features builds get the
+//! typed domain + [`StubSamGovProvider`]. Building with
+//! `--features live` adds [`LiveSamGovProvider`] which calls
+//! `https://api.sam.gov/entity-information/v3/entities` — requires
+//! `SAM_GOV_API_KEY` (free registration at `api.data.gov/signup/`).
+//! Per the REAL-by-default standard, `from_env()` fails loud if the
+//! var is missing; there is no silent stub fallback.
 
 mod error;
+#[cfg(feature = "live")]
+pub mod live;
 mod provenance;
 mod provider;
 mod suggestor;
@@ -36,6 +44,8 @@ mod types;
 pub use embassy_pack::{CallContext, Observation, content_hash};
 
 pub use error::SamGovError;
+#[cfg(feature = "live")]
+pub use live::LiveSamGovProvider;
 pub use provenance::{SAM_GOV_PROVENANCE, SamGov};
 pub use provider::{SamGovProvider, SamGovRequest, SamGovResponse, StubSamGovProvider};
 pub use suggestor::{SamGovLookupSuggestor, SamGovRegistrationPayload};

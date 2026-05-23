@@ -22,6 +22,17 @@ serde_json.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 
+# Live HTTP transport — `from_env()` reads SAM_GOV_API_KEY (free
+# registration at api.data.gov/signup/). Fails loud if the var is
+# missing; never silently falls back to the stub.
+manifold = { workspace = true, optional = true, features = ["fetch"] }
+tokio = { workspace = true, optional = true }
+urlencoding = { version = "2", optional = true }
+
+[features]
+default = []
+live = ["dep:manifold", "dep:tokio", "dep:urlencoding"]
+
 [dev-dependencies]
 tokio = { workspace = true }
 
