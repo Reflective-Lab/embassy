@@ -223,19 +223,36 @@ fn run_search(
         &backend,
         initial,
         |prior| {
-            cumulative += parse_page_notices(&prior.body).len();
+            let page_notices = parse_page_notices(&prior.body).len();
+            cumulative += page_notices;
             // Lookup is tight: one page is always enough.
             if matches!(req_for_closure, TedRequest::Lookup { .. }) {
                 return None;
             }
-            // SearchByCountry: stop once we've covered the target.
+            // Stop on the first page that produces zero typed notices.
+            // TED has a quirk: when `totalNoticeCount` is 0, the API
+            // still ships an `iterationNextToken`. Honoring that token
+            // sends us into an infinite loop of empty pages. Treat
+            // "zero notices on this page" as end-of-stream — partial
+            // data we've already collected is preserved.
+            if page_notices == 0 {
+                return None;
+            }
+            // Reached requested limit — stop.
             if cumulative >= target_limit {
                 return None;
             }
             let token = match extract_next_token(&prior.body) {
                 Ok(Some(t)) => t,
                 Ok(None) => return None,
-                Err(e) => return Some(Err(e)),
+                // Non-JSON mid-pagination (rate-limit page, intermittent
+                // upstream error, schema drift) → treat as end-of-stream
+                // rather than failing the whole operation. Preserve
+                // partial data we already collected. The alternative —
+                // crashing on page N — discards N-1 pages of real
+                // evidence on what's typically a transient upstream
+                // hiccup.
+                Err(_) => return None,
             };
             let body =
                 build_search_body(&req_for_closure, opts_for_closure.page_size, Some(&token));
