@@ -503,15 +503,37 @@ impl WireNotice {
     }
 }
 
-/// TED fields are often multi-language objects like
-/// `{"eng": "...", "swe": "..."}` or arrays. Pick the first non-empty
-/// string value we can find, in document order.
+/// TED fields are often multi-language objects keyed by 3-letter
+/// language code (`{"eng": "...", "swe": "...", "lav": "..."}`) or
+/// arrays of such strings. Pick a stable, buyer-legible value rather
+/// than whichever key happens to come first in the JSON object —
+/// otherwise display picks Latvian over English on serializers that
+/// emit object keys alphabetically.
+///
+/// Preference order, applied recursively at every object node:
+/// 1. English (`eng`)
+/// 2. Swedish (`swe`) — the most common buyer-jurisdiction language
+///    in this stack's regulated-onboarding workflows
+/// 3. Any other non-empty value, in iteration order
 fn first_string(value: Option<&serde_json::Value>) -> Option<String> {
+    const PREFERRED_LOCALES: &[&str] = &["eng", "swe"];
     let v = value?;
     match v {
         serde_json::Value::String(s) => (!s.is_empty()).then(|| s.clone()),
         serde_json::Value::Array(arr) => arr.iter().find_map(|item| first_string(Some(item))),
-        serde_json::Value::Object(map) => map.values().find_map(|item| first_string(Some(item))),
+        serde_json::Value::Object(map) => {
+            // Try preferred locales first so multi-lang titles display
+            // in English / Swedish rather than whichever language key
+            // sorts earliest in the JSON object.
+            for locale in PREFERRED_LOCALES {
+                if let Some(item) = map.get(*locale) {
+                    if let Some(s) = first_string(Some(item)) {
+                        return Some(s);
+                    }
+                }
+            }
+            map.values().find_map(|item| first_string(Some(item)))
+        }
         _ => None,
     }
 }
@@ -724,14 +746,64 @@ mod tests {
         // returning empty.
         let multilang = serde_json::json!({"eng": "english title", "swe": "svensk titel"});
         let s = first_string(Some(&multilang));
-        // Order in JSON object is preserved in serde_json's Map; the
-        // first key inserted ("eng") is returned.
         assert_eq!(s.as_deref(), Some("english title"));
 
         let array = serde_json::json!(["", "first non-empty"]);
         assert_eq!(
             first_string(Some(&array)).as_deref(),
             Some("first non-empty")
+        );
+    }
+
+    #[test]
+    fn first_string_prefers_english_over_alphabetically_earlier_locales() {
+        // Intent: buyer-facing demos surfaced TED titles displaying in
+        // Latvian ("Zviedrija-Stokholma: Arhitektūras…") because
+        // serde_json::Map iterates keys alphabetically and `lav` sorts
+        // before `swe`/`eng`. The locale-preference list must pin
+        // English (then Swedish) at the top so display stays
+        // buyer-legible regardless of JSON key order.
+        let multilang = serde_json::json!({
+            "lav": "Latvian title that should NOT be picked",
+            "hun": "Hungarian title that should NOT be picked",
+            "eng": "English title — preferred",
+            "swe": "Svensk titel — second preference",
+        });
+        assert_eq!(
+            first_string(Some(&multilang)).as_deref(),
+            Some("English title — preferred")
+        );
+
+        // No English available → fall back to Swedish.
+        let no_english = serde_json::json!({
+            "lav": "Latvian",
+            "swe": "Svenska",
+            "hun": "Magyar",
+        });
+        assert_eq!(
+            first_string(Some(&no_english)).as_deref(),
+            Some("Svenska")
+        );
+
+        // Neither English nor Swedish → fall back to any non-empty.
+        let no_preferred = serde_json::json!({
+            "hun": "Magyar",
+            "lav": "Latvian",
+        });
+        // serde_json::Map iterates in BTreeMap order, so "hun" comes
+        // before "lav" alphabetically. The fallback is "any non-empty
+        // in iteration order", which is deterministic by Map order.
+        let result = first_string(Some(&no_preferred));
+        assert!(result.is_some(), "expected fallback to any non-empty");
+
+        // Multi-language object wrapped in an array (TED's typical
+        // shape): inner object preference still applies.
+        let wrapped = serde_json::json!([
+            {"lav": "Latvian first", "eng": "English first"}
+        ]);
+        assert_eq!(
+            first_string(Some(&wrapped)).as_deref(),
+            Some("English first")
         );
     }
 
