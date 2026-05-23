@@ -148,9 +148,8 @@ impl SamGovProvider for LiveSamGovProvider {
             .ok_or_else(|| SamGovError::NotFound(uei.as_str().to_string()))?;
         let registration = entity.into_contractor_registration(uei.clone());
 
-        let request_json = serde_json::to_string(request).map_err(|e| {
-            SamGovError::InvalidRequest(format!("non-serializable request: {e}"))
-        })?;
+        let request_json = serde_json::to_string(request)
+            .map_err(|e| SamGovError::InvalidRequest(format!("non-serializable request: {e}")))?;
         let request_hash = content_hash(&request_json);
         let latency_ms = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
 
@@ -218,7 +217,7 @@ async fn fetch_json(url: &str, opts: &LiveFetchOptions) -> Result<Vec<u8>, LiveE
     let opts = opts.clone();
     tokio::task::spawn_blocking(move || {
         let provider = HttpFetchProvider::new()
-            .map_err(|e| LiveError::Fetch(e.to_string()))?
+            .into_live_fetch_provider()?
             .with_user_agent(&opts.user_agent);
         let request = WebFetchRequest::new(&url)
             .map_err(|e| LiveError::Fetch(e.to_string()))?
@@ -244,6 +243,22 @@ async fn fetch_json(url: &str, opts: &LiveFetchOptions) -> Result<Vec<u8>, LiveE
         }
     })
     .await?
+}
+
+trait IntoLiveFetchProvider {
+    fn into_live_fetch_provider(self) -> Result<HttpFetchProvider, LiveError>;
+}
+
+impl IntoLiveFetchProvider for HttpFetchProvider {
+    fn into_live_fetch_provider(self) -> Result<HttpFetchProvider, LiveError> {
+        Ok(self)
+    }
+}
+
+impl<E: std::fmt::Display> IntoLiveFetchProvider for Result<HttpFetchProvider, E> {
+    fn into_live_fetch_provider(self) -> Result<HttpFetchProvider, LiveError> {
+        self.map_err(|err| LiveError::Fetch(err.to_string()))
+    }
 }
 
 // ─────────────────────────── wire types ───────────────────────────
@@ -401,7 +416,10 @@ mod tests {
         );
         // Unknown future status falls through to Inactive — the safer
         // default for federal-award eligibility checks.
-        assert_eq!(parse_status(Some("Something")), RegistrationStatus::Inactive);
+        assert_eq!(
+            parse_status(Some("Something")),
+            RegistrationStatus::Inactive
+        );
     }
 
     #[test]

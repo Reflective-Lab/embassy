@@ -250,7 +250,7 @@ async fn fetch_text(url: &str, opts: &LiveFetchOptions) -> Result<String, LiveEr
     let opts = opts.clone();
     tokio::task::spawn_blocking(move || {
         let provider = HttpFetchProvider::new()
-            .map_err(|e| LiveError::Fetch(e.to_string()))?
+            .into_live_fetch_provider()?
             .with_user_agent(&opts.user_agent);
         let request = WebFetchRequest::new(&url)
             .map_err(|e| LiveError::Fetch(e.to_string()))?
@@ -271,6 +271,22 @@ async fn fetch_text(url: &str, opts: &LiveFetchOptions) -> Result<String, LiveEr
         Ok(response.body)
     })
     .await?
+}
+
+trait IntoLiveFetchProvider {
+    fn into_live_fetch_provider(self) -> Result<HttpFetchProvider, LiveError>;
+}
+
+impl IntoLiveFetchProvider for HttpFetchProvider {
+    fn into_live_fetch_provider(self) -> Result<HttpFetchProvider, LiveError> {
+        Ok(self)
+    }
+}
+
+impl<E: std::fmt::Display> IntoLiveFetchProvider for Result<HttpFetchProvider, E> {
+    fn into_live_fetch_provider(self) -> Result<HttpFetchProvider, LiveError> {
+        self.map_err(|err| LiveError::Fetch(err.to_string()))
+    }
 }
 
 #[derive(Debug, Clone)]
