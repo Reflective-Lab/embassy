@@ -33,7 +33,7 @@ embassy_pack::simple_id!(
         }
         let middle_and_kind = &chars[2..];
         // Require at least one digit in middle section
-        if !middle_and_kind.iter().any(|c| c.is_ascii_digit()) {
+        if !middle_and_kind.iter().any(char::is_ascii_digit) {
             return Err(EpoError::InvalidIdentifier(
                 "invalid EpoNumber: no digit sequence found after country code".into(),
             ));
@@ -74,9 +74,18 @@ mod tests {
     fn valid_epo_numbers_parse() {
         // Intent: well-formed EPO publication numbers with 2-letter country
         // code must be accepted so patent records can be forwarded to OPS.
-        assert_eq!(EpoNumber::parse("EP1234567A1").unwrap().as_str(), "EP1234567A1");
-        assert_eq!(EpoNumber::parse("WO2023012345A1").unwrap().as_str(), "WO2023012345A1");
-        assert_eq!(EpoNumber::parse("US20230012345A1").unwrap().as_str(), "US20230012345A1");
+        assert_eq!(
+            EpoNumber::parse("EP1234567A1").unwrap().as_str(),
+            "EP1234567A1"
+        );
+        assert_eq!(
+            EpoNumber::parse("WO2023012345A1").unwrap().as_str(),
+            "WO2023012345A1"
+        );
+        assert_eq!(
+            EpoNumber::parse("US20230012345A1").unwrap().as_str(),
+            "US20230012345A1"
+        );
     }
 
     #[test]
@@ -84,10 +93,10 @@ mod tests {
         // Intent: numbers without the 2-letter country prefix, or that are
         // too short to hold all required fields, must be rejected before
         // they reach the EPO OPS API.
-        assert!(EpoNumber::parse("STUB-001").is_err());  // old stub value
+        assert!(EpoNumber::parse("STUB-001").is_err()); // old stub value
         assert!(EpoNumber::parse("1234567A1").is_err()); // missing country code
         assert!(EpoNumber::parse("ep1234567A1").is_err()); // lowercase country code
-        assert!(EpoNumber::parse("EP123").is_err());     // too short
+        assert!(EpoNumber::parse("EP123").is_err()); // too short
     }
 
     #[test]

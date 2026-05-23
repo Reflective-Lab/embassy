@@ -33,7 +33,7 @@ embassy_pack::simple_id!(
             ));
         }
         // Require at least one digit in middle section
-        if !chars[2..].iter().any(|c| c.is_ascii_digit()) {
+        if !chars[2..].iter().any(char::is_ascii_digit) {
             return Err(UsptoError::InvalidIdentifier(
                 "invalid PatentNumber: no digit sequence found after country code".into(),
             ));
@@ -74,18 +74,24 @@ mod tests {
     fn valid_patent_numbers_parse() {
         // Intent: well-formed USPTO patent numbers must be accepted so
         // records can be forwarded to the USPTO PatentsView API.
-        assert_eq!(PatentNumber::parse("US10000001B2").unwrap().as_str(), "US10000001B2");
-        assert_eq!(PatentNumber::parse("US20230012345A1").unwrap().as_str(), "US20230012345A1");
+        assert_eq!(
+            PatentNumber::parse("US10000001B2").unwrap().as_str(),
+            "US10000001B2"
+        );
+        assert_eq!(
+            PatentNumber::parse("US20230012345A1").unwrap().as_str(),
+            "US20230012345A1"
+        );
     }
 
     #[test]
     fn invalid_patent_numbers_rejected() {
         // Intent: numbers missing the 2-letter prefix or too short must be
         // caught at the boundary to avoid silent mismatches in patent lookups.
-        assert!(PatentNumber::parse("STUB-001").is_err());   // old stub value
+        assert!(PatentNumber::parse("STUB-001").is_err()); // old stub value
         assert!(PatentNumber::parse("10000001B2").is_err()); // missing country code
         assert!(PatentNumber::parse("us10000001B2").is_err()); // lowercase prefix
-        assert!(PatentNumber::parse("US123").is_err());      // too short
+        assert!(PatentNumber::parse("US123").is_err()); // too short
     }
 
     #[test]

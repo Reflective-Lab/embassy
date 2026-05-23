@@ -27,6 +27,17 @@ pub enum TedRequest {
         /// Cap on the total number of typed notices returned.
         limit: usize,
     },
+    /// Search for procurement notices where a named entity is the
+    /// buyer. Used in KYC / counterparty enrichment: "has this
+    /// entity issued public-sector contracts on TED?". Match is
+    /// exact (TED v3 doesn't accept wildcards on `buyer-name=`);
+    /// callers provide the canonical legal name.
+    SearchByBuyerName {
+        /// Exact buyer name as it appears in TED publications.
+        buyer_name: String,
+        /// Cap on the total number of typed notices returned.
+        limit: usize,
+    },
 }
 
 impl FactPayload for TedRequest {
@@ -96,9 +107,6 @@ impl TedProvider for StubTedProvider {
                 Ok(TedResponse { records: vec![obs] })
             }
             TedRequest::SearchByCountry { country, limit } => {
-                // Stub: produce `limit` deterministic synthetic notices
-                // so pagination consumers can be tested against the
-                // contract shape without hitting the live API.
                 let mut records = Vec::with_capacity(*limit);
                 for i in 0..*limit {
                     let notice_id_str = format!("{:06}-2026", 100_000 + i);
@@ -108,6 +116,33 @@ impl TedProvider for StubTedProvider {
                         contracting_authority: format!("Stub Authority #{i}"),
                         title: format!("Stub procurement notice #{i} for {country}"),
                         country: country.clone(),
+                        procurement_type: ProcurementType::ContractNotice,
+                        deadline: Some("2026-12-31T23:59:59Z".to_string()),
+                    };
+                    records.push(Observation {
+                        observation_id: format!("obs:ted:{request_hash}:{i}"),
+                        request_hash: request_hash.clone(),
+                        vendor: "stub_ted".to_string(),
+                        model: "stub".to_string(),
+                        latency_ms: 5,
+                        cost_estimate: None,
+                        tokens: None,
+                        content: notice,
+                        raw_response: None,
+                    });
+                }
+                Ok(TedResponse { records })
+            }
+            TedRequest::SearchByBuyerName { buyer_name, limit } => {
+                let mut records = Vec::with_capacity(*limit);
+                for i in 0..*limit {
+                    let notice_id_str = format!("{:06}-2026", 200_000 + i);
+                    let notice_id = TedNoticeId::parse(&notice_id_str)?;
+                    let notice = ProcurementNotice {
+                        notice_id,
+                        contracting_authority: buyer_name.clone(),
+                        title: format!("Stub procurement notice #{i} by {buyer_name}"),
+                        country: "SE".to_string(),
                         procurement_type: ProcurementType::ContractNotice,
                         deadline: Some("2026-12-31T23:59:59Z".to_string()),
                     };

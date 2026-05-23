@@ -258,8 +258,14 @@ mod tests {
         assert_eq!(award.recipient_name, "ACME CONTRACTING LLC");
         assert_eq!(award.total_obligated_micros, 1_234_567_890_000);
         assert_eq!(award.awarding_agency, "Department of Defense");
-        assert_eq!(award.period_of_performance_start.as_deref(), Some("2025-01-15"));
-        assert_eq!(award.period_of_performance_end.as_deref(), Some("2026-01-14"));
+        assert_eq!(
+            award.period_of_performance_start.as_deref(),
+            Some("2025-01-15")
+        );
+        assert_eq!(
+            award.period_of_performance_end.as_deref(),
+            Some("2026-01-14")
+        );
     }
 
     #[test]
@@ -296,7 +302,9 @@ mod tests {
         let req = UsaspendingRequest::Lookup {
             award_id: AwardId::parse("CONT_AWD_FA8501-19-D-0001_9700_-NONE-_-NONE-").unwrap(),
         };
-        let result = provider.lookup(&req, &embassy_pack::CallContext::default()).await;
+        let result = provider
+            .lookup(&req, &embassy_pack::CallContext::default())
+            .await;
         match result {
             Ok(resp) => assert_eq!(resp.records.len(), 1),
             Err(UsaspendingError::NotFound(_)) => {} // acceptable — proves the round-trip

@@ -59,10 +59,22 @@ mod tests {
         // Intent: both the all-digit and the 2-letter-prefix variants must
         // be accepted so the port works for England/Wales, Scotland, and
         // Northern Ireland registrations alike.
-        assert_eq!(CompanyNumber::parse("12345678").unwrap().as_str(), "12345678");
-        assert_eq!(CompanyNumber::parse("SC012345").unwrap().as_str(), "SC012345");
-        assert_eq!(CompanyNumber::parse("NI000001").unwrap().as_str(), "NI000001");
-        assert_eq!(CompanyNumber::parse("OC123456").unwrap().as_str(), "OC123456");
+        assert_eq!(
+            CompanyNumber::parse("12345678").unwrap().as_str(),
+            "12345678"
+        );
+        assert_eq!(
+            CompanyNumber::parse("SC012345").unwrap().as_str(),
+            "SC012345"
+        );
+        assert_eq!(
+            CompanyNumber::parse("NI000001").unwrap().as_str(),
+            "NI000001"
+        );
+        assert_eq!(
+            CompanyNumber::parse("OC123456").unwrap().as_str(),
+            "OC123456"
+        );
     }
 
     #[test]
@@ -70,11 +82,11 @@ mod tests {
         // Intent: numbers with wrong length or disallowed char patterns must
         // be rejected before reaching the Companies House API to avoid
         // misleading 404 responses.
-        assert!(CompanyNumber::parse("STUB-001").is_err());  // old stub value
-        assert!(CompanyNumber::parse("1234567").is_err());   // 7 digits, too short
+        assert!(CompanyNumber::parse("STUB-001").is_err()); // old stub value
+        assert!(CompanyNumber::parse("1234567").is_err()); // 7 digits, too short
         assert!(CompanyNumber::parse("123456789").is_err()); // 9 digits, too long
-        assert!(CompanyNumber::parse("sc012345").is_err());  // lowercase prefix
-        assert!(CompanyNumber::parse("S1012345").is_err());  // 1-char prefix
+        assert!(CompanyNumber::parse("sc012345").is_err()); // lowercase prefix
+        assert!(CompanyNumber::parse("S1012345").is_err()); // 1-char prefix
     }
 
     #[test]

@@ -74,10 +74,10 @@ mod tests {
         // Intent: slugs that violate GitHub's rules (leading/trailing hyphen,
         // consecutive hyphens, disallowed chars) must be caught at the port
         // boundary before they produce a confusing API error.
-        assert!(OrgSlug::parse("-leading").is_err());   // leading hyphen
-        assert!(OrgSlug::parse("trailing-").is_err());  // trailing hyphen
+        assert!(OrgSlug::parse("-leading").is_err()); // leading hyphen
+        assert!(OrgSlug::parse("trailing-").is_err()); // trailing hyphen
         assert!(OrgSlug::parse("double--hyphen").is_err()); // consecutive hyphens
-        assert!(OrgSlug::parse("has space").is_err());  // space not allowed
+        assert!(OrgSlug::parse("has space").is_err()); // space not allowed
         assert!(OrgSlug::parse("has_underscore").is_err()); // underscore not allowed
     }
 

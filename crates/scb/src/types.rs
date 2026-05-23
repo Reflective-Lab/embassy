@@ -38,20 +38,28 @@ embassy_pack::simple_id!(
             ));
         }
         // Next 4 chars: digits (statistical product code)
-        if !chars[2..6].iter().all(|c| c.is_ascii_digit()) {
+        if !chars[2..6].iter().all(char::is_ascii_digit) {
             return Err(ScbError::InvalidIdentifier(
                 "invalid TableId: positions 3-6 must be digits (statistical product code)".into(),
             ));
         }
         // Remaining chars: at least one uppercase letter followed by at least one digit
         let rest = &chars[6..];
-        let letter_run = rest.iter().take_while(|c| c.is_ascii_uppercase()).count();
+        let letter_run = rest
+            .iter()
+            .copied()
+            .take_while(char::is_ascii_uppercase)
+            .count();
         if letter_run == 0 {
             return Err(ScbError::InvalidIdentifier(
                 "invalid TableId: expected at least one uppercase letter after the 4-digit product code".into(),
             ));
         }
-        let digit_run = rest[letter_run..].iter().take_while(|c| c.is_ascii_digit()).count();
+        let digit_run = rest[letter_run..]
+            .iter()
+            .copied()
+            .take_while(char::is_ascii_digit)
+            .count();
         if digit_run == 0 {
             return Err(ScbError::InvalidIdentifier(
                 "invalid TableId: expected digits after the subtable letter(s)".into(),
@@ -98,11 +106,11 @@ mod tests {
         // Intent: IDs that don't match the 2-letter + 4-digit + letter +
         // digit structure must be caught before they reach the SCB API,
         // where a bad table ID yields an opaque error.
-        assert!(TableId::parse("STUB-001").is_err());     // old stub value
-        assert!(TableId::parse("BE01").is_err());         // too short
-        assert!(TableId::parse("be0101A1").is_err());     // lowercase subject code
-        assert!(TableId::parse("BE010XA1").is_err());     // non-digit in product code
-        assert!(TableId::parse("BE01011A").is_err());     // no trailing digit(s)
+        assert!(TableId::parse("STUB-001").is_err()); // old stub value
+        assert!(TableId::parse("BE01").is_err()); // too short
+        assert!(TableId::parse("be0101A1").is_err()); // lowercase subject code
+        assert!(TableId::parse("BE010XA1").is_err()); // non-digit in product code
+        assert!(TableId::parse("BE01011A").is_err()); // no trailing digit(s)
     }
 
     #[test]

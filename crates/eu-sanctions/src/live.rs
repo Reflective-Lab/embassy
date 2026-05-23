@@ -160,7 +160,9 @@ impl EuSanctionsProvider for LiveEuSanctionsProvider {
         let EuSanctionsRequest::Screen { subject } = request;
         let query = subject.name.trim().to_string();
         if query.is_empty() {
-            return Err(EuSanctionsError::InvalidSubject("empty subject name".into()));
+            return Err(EuSanctionsError::InvalidSubject(
+                "empty subject name".into(),
+            ));
         }
         let query_lc = query.to_ascii_lowercase();
 
@@ -203,10 +205,7 @@ impl EuSanctionsProvider for LiveEuSanctionsProvider {
                 },
             };
             records.push(Observation {
-                observation_id: format!(
-                    "obs:eu-sanctions-live:{request_hash}:{}",
-                    records.len()
-                ),
+                observation_id: format!("obs:eu-sanctions-live:{request_hash}:{}", records.len()),
                 request_hash: request_hash.clone(),
                 vendor: self.name().to_string(),
                 model: "opensanctions-eu-fsf-csv-v1".to_string(),
@@ -376,7 +375,10 @@ vessel-001,Vessel,\"DARK TANKER\",\"\",,,,,\"Council Regulation (EU) 833/2014\",
         let req = EuSanctionsRequest::Screen {
             subject: SanctionsSubject::parse("ACME RU").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert_eq!(resp.records.len(), 1);
         assert_eq!(resp.records[0].content.match_type, MatchType::Alias);
         assert_eq!(resp.records[0].content.subject_name, "Acme Sanctioned LLC");
@@ -389,7 +391,10 @@ vessel-001,Vessel,\"DARK TANKER\",\"\",,,,,\"Council Regulation (EU) 833/2014\",
         let req = EuSanctionsRequest::Screen {
             subject: SanctionsSubject::parse("dark tanker").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert_eq!(resp.records.len(), 1);
         assert_eq!(resp.records[0].content.match_type, MatchType::Exact);
         assert_eq!(resp.records[0].content.subject_type, SubjectType::Vessel);
@@ -402,7 +407,10 @@ vessel-001,Vessel,\"DARK TANKER\",\"\",,,,,\"Council Regulation (EU) 833/2014\",
         let req = EuSanctionsRequest::Screen {
             subject: SanctionsSubject::parse("Volvo AB").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert!(resp.records.is_empty());
     }
 
@@ -420,7 +428,10 @@ vessel-001,Vessel,\"DARK TANKER\",\"\",,,,,\"Council Regulation (EU) 833/2014\",
         let req = EuSanctionsRequest::Screen {
             subject: SanctionsSubject::parse("Volvo AB").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         // Volvo is not on the EU FSF; expect zero records.
         assert!(resp.records.is_empty());
     }

@@ -404,11 +404,23 @@ mod tests {
         // Intent: GLEIF publishes status as upper-snake ("ISSUED",
         // "LAPSED"). Our typed enum is lower-snake. The parser must
         // bridge these without losing fidelity.
-        assert_eq!(parse_registration_status(Some("ISSUED")), RegistrationStatus::Issued);
-        assert_eq!(parse_registration_status(Some("LAPSED")), RegistrationStatus::Lapsed);
-        assert_eq!(parse_registration_status(Some("MERGED")), RegistrationStatus::Merged);
+        assert_eq!(
+            parse_registration_status(Some("ISSUED")),
+            RegistrationStatus::Issued
+        );
+        assert_eq!(
+            parse_registration_status(Some("LAPSED")),
+            RegistrationStatus::Lapsed
+        );
+        assert_eq!(
+            parse_registration_status(Some("MERGED")),
+            RegistrationStatus::Merged
+        );
         assert_eq!(parse_registration_status(None), RegistrationStatus::Pending);
-        assert_eq!(parse_registration_status(Some("UNKNOWN_FUTURE_VALUE")), RegistrationStatus::Pending);
+        assert_eq!(
+            parse_registration_status(Some("UNKNOWN_FUTURE_VALUE")),
+            RegistrationStatus::Pending
+        );
     }
 
     #[test]

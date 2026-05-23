@@ -68,7 +68,7 @@ security-audit:
         --ignore RUSTSEC-2024-0436 \
         --ignore RUSTSEC-2025-0134 \
         --ignore RUSTSEC-2026-0002
-    cargo deny check
+    cargo deny check -A license-not-encountered
 
 # Session opener
 focus: status check test
@@ -97,16 +97,16 @@ coverage:
     set -euo pipefail
     out_dir="target/coverage"
     mkdir -p "${out_dir}/html"
-    common=(--workspace --lib --tests
-        --ignore-filename-regex '(^|/)(tests|benches|examples)/')
+    ignore_re='(^|/)(tests|benches|examples)/'
+    common=(--workspace --lib --tests)
     cargo llvm-cov clean --workspace
     rm -rf target/tests/trybuild
     cargo llvm-cov "${common[@]}" --no-report
-    cargo llvm-cov report \
+    cargo llvm-cov report --ignore-filename-regex "${ignore_re}" \
         --json --summary-only --output-path "${out_dir}/converge-coverage.json"
-    cargo llvm-cov report \
+    cargo llvm-cov report --ignore-filename-regex "${ignore_re}" \
         --lcov --output-path "${out_dir}/lcov.info"
-    cargo llvm-cov report \
+    cargo llvm-cov report --ignore-filename-regex "${ignore_re}" \
         --html --output-dir "${out_dir}/html"
     pct=$(python3 -c "import json; d=json.load(open('${out_dir}/converge-coverage.json')); print(f\"{d['data'][0]['totals']['lines']['percent']:.1f}\")")
     echo "coverage: ${pct}%  json→${out_dir}/converge-coverage.json  lcov→${out_dir}/lcov.info  html→${out_dir}/html/index.html"
@@ -126,11 +126,16 @@ performance-profile:
             mode_flag="--baseline"
         fi
     fi
-    echo "performance-profile: ${mode_flag} ${name}"
-    cargo bench --workspace -- "${mode_flag}" "${name}" || true
-    if [ -f scripts/extract-criterion-baseline.py ]; then
-        python3 scripts/extract-criterion-baseline.py || \
-            echo "warn: baseline extraction failed (non-fatal)"
+    bench_count="$(find crates -path '*/benches/*.rs' -type f | wc -l | tr -d ' ')"
+    if [ "${bench_count}" -eq 0 ]; then
+        echo "performance-profile: no benchmark targets registered; skipped"
+    else
+        echo "performance-profile: ${mode_flag} ${name}"
+        cargo bench --workspace --benches -- "${mode_flag}" "${name}"
+        if [ -f scripts/extract-criterion-baseline.py ]; then
+            python3 scripts/extract-criterion-baseline.py || \
+                echo "warn: baseline extraction failed (non-fatal)"
+        fi
     fi
     echo "performance-profile: criterion→target/criterion/"
 

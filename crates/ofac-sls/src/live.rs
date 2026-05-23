@@ -196,9 +196,8 @@ impl OfacSlsProvider for LiveOfacSlsProvider {
         }
         let query_lc = query.to_ascii_lowercase();
 
-        let request_json = serde_json::to_string(request).map_err(|e| {
-            OfacSlsError::InvalidRequest(format!("non-serializable request: {e}"))
-        })?;
+        let request_json = serde_json::to_string(request)
+            .map_err(|e| OfacSlsError::InvalidRequest(format!("non-serializable request: {e}")))?;
         let request_hash = content_hash(&request_json);
         let latency_ms = u64::try_from(started.elapsed().as_millis()).unwrap_or(u64::MAX);
 
@@ -225,10 +224,7 @@ impl OfacSlsProvider for LiveOfacSlsProvider {
                 jurisdictions: vec!["US".to_string()],
             };
             records.push(Observation {
-                observation_id: format!(
-                    "obs:ofac-sls-live:{request_hash}:{}",
-                    records.len()
-                ),
+                observation_id: format!("obs:ofac-sls-live:{request_hash}:{}", records.len()),
                 request_hash: request_hash.clone(),
                 vendor: self.name().to_string(),
                 model: "ofac-sdn-csv-v1".to_string(),
@@ -368,10 +364,7 @@ mod tests {
         // Intent: OFAC names like "NORTHERN PROPERTIES, S.A." contain
         // commas inside quoted fields. A naive split would corrupt
         // them — and a corrupted name silently misses real hits.
-        let row = parse_csv_row(
-            "\"1\",\"NORTHERN PROPERTIES, S.A.\",\"-0-\",\"SDNTK\"",
-        )
-        .unwrap();
+        let row = parse_csv_row("\"1\",\"NORTHERN PROPERTIES, S.A.\",\"-0-\",\"SDNTK\"").unwrap();
         assert_eq!(row[0], "1");
         assert_eq!(row[1], "NORTHERN PROPERTIES, S.A.");
         assert_eq!(row[2], "-0-");
@@ -403,7 +396,10 @@ mod tests {
         let req = OfacSlsRequest::Screen {
             subject: SanctionsSubject::parse("northern properties, s.a.").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert_eq!(resp.records.len(), 1);
         assert_eq!(resp.records[0].content.match_type, MatchType::Exact);
         assert!((resp.records[0].content.match_score - SCORE_EXACT).abs() < 1e-6);
@@ -420,7 +416,10 @@ mod tests {
         let req = OfacSlsRequest::Screen {
             subject: SanctionsSubject::parse("Smith").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert_eq!(resp.records.len(), 1);
         assert_eq!(resp.records[0].content.match_type, MatchType::Fuzzy);
     }
@@ -437,7 +436,10 @@ mod tests {
         let req = OfacSlsRequest::Screen {
             subject: SanctionsSubject::parse("Volvo AB").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert!(resp.records.is_empty());
     }
 
@@ -455,7 +457,10 @@ mod tests {
         let req = OfacSlsRequest::Screen {
             subject: SanctionsSubject::parse("Apple Inc.").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         // Apple is not on the SDN; expect zero records.
         assert!(resp.records.is_empty());
     }

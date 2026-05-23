@@ -61,9 +61,9 @@ mod tests {
         // Intent: the type boundary must reject IDs that don't match the
         // documented Q<digits> format, preventing garbage from entering
         // the audit log or being forwarded to Wikidata's API.
-        assert!(QId::parse("q42").is_err());     // lowercase q
-        assert!(QId::parse("P42").is_err());     // wrong prefix (property)
-        assert!(QId::parse("Q42x").is_err());    // non-digit suffix
+        assert!(QId::parse("q42").is_err()); // lowercase q
+        assert!(QId::parse("P42").is_err()); // wrong prefix (property)
+        assert!(QId::parse("Q42x").is_err()); // non-digit suffix
     }
 
     #[test]

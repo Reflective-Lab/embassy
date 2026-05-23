@@ -33,7 +33,7 @@ use std::time::Instant;
 
 use async_trait::async_trait;
 use manifold::pagination::{PaginationConfig, paginate};
-use manifold::{HttpFetchProvider, WebFetchBackend, WebFetchRequest, WebFetchResponse};
+use manifold::{HttpFetchProvider, WebFetchRequest, WebFetchResponse};
 use serde::Deserialize;
 use thiserror::Error;
 
@@ -156,7 +156,8 @@ impl TedProvider for LiveTedProvider {
                     raw_response: None,
                 }]
             }
-            TedRequest::SearchByCountry { limit, .. } => notices
+            TedRequest::SearchByCountry { limit, .. }
+            | TedRequest::SearchByBuyerName { limit, .. } => notices
                 .into_iter()
                 .take(*limit)
                 .enumerate()
@@ -213,7 +214,9 @@ fn run_search(
     let req_for_closure = request.clone();
     let target_limit = match request {
         TedRequest::Lookup { .. } => 1,
-        TedRequest::SearchByCountry { limit, .. } => *limit,
+        TedRequest::SearchByCountry { limit, .. } | TedRequest::SearchByBuyerName { limit, .. } => {
+            *limit
+        }
     };
     let mut cumulative = 0usize;
     let pages = paginate(
@@ -285,6 +288,12 @@ fn build_search_body(request: &TedRequest, page_size: usize, cursor: Option<&str
             // bridge here at the boundary.
             let alpha3 = alpha2_to_alpha3(country);
             format!("organisation-country-buyer={alpha3}")
+        }
+        TedRequest::SearchByBuyerName { buyer_name, .. } => {
+            // TED v3 `buyer-name=` is exact-match (no wildcards). The
+            // caller must supply the canonical legal name as it
+            // appears in publications.
+            format!("buyer-name={buyer_name}")
         }
     };
     let cursor_field = match cursor {
@@ -452,16 +461,19 @@ impl WireNotice {
             .ok_or_else(|| LiveError::Parse("missing publication-number".into()))?;
         let notice_id = TedNoticeId::parse(&pubnum)
             .map_err(|e| LiveError::Parse(format!("invalid publication-number `{pubnum}`: {e}")))?;
-        let title = first_string(&self.notice_title).unwrap_or_else(|| "(untitled)".to_string());
-        let contracting_authority =
-            first_string(&self.buyer_name).unwrap_or_else(|| "(unknown authority)".to_string());
-        let country = first_string(&self.organisation_country_buyer)
-            .map(|alpha3| alpha3_to_alpha2(&alpha3))
-            .unwrap_or_else(|| "??".to_string());
-        let procurement_type = first_string(&self.notice_type)
-            .map(|s| parse_procurement_type(&s))
-            .unwrap_or(ProcurementType::Other);
-        let deadline = first_string(&self.deadline_receipt_tender_date_lot);
+        let title = first_string(self.notice_title.as_ref())
+            .unwrap_or_else(|| "(untitled)".to_string());
+        let contracting_authority = first_string(self.buyer_name.as_ref())
+            .unwrap_or_else(|| "(unknown authority)".to_string());
+        let country = match first_string(self.organisation_country_buyer.as_ref()) {
+            Some(alpha3) => alpha3_to_alpha2(&alpha3),
+            None => "??".to_string(),
+        };
+        let procurement_type = match first_string(self.notice_type.as_ref()) {
+            Some(s) => parse_procurement_type(&s),
+            None => ProcurementType::Other,
+        };
+        let deadline = first_string(self.deadline_receipt_tender_date_lot.as_ref());
 
         Ok(ProcurementNotice {
             notice_id,
@@ -477,16 +489,12 @@ impl WireNotice {
 /// TED fields are often multi-language objects like
 /// `{"eng": "...", "swe": "..."}` or arrays. Pick the first non-empty
 /// string value we can find, in document order.
-fn first_string(value: &Option<serde_json::Value>) -> Option<String> {
-    let v = value.as_ref()?;
+fn first_string(value: Option<&serde_json::Value>) -> Option<String> {
+    let v = value?;
     match v {
         serde_json::Value::String(s) => (!s.is_empty()).then(|| s.clone()),
-        serde_json::Value::Array(arr) => arr
-            .iter()
-            .find_map(|item| first_string(&Some(item.clone()))),
-        serde_json::Value::Object(map) => map
-            .values()
-            .find_map(|item| first_string(&Some(item.clone()))),
+        serde_json::Value::Array(arr) => arr.iter().find_map(|item| first_string(Some(item))),
+        serde_json::Value::Object(map) => map.values().find_map(|item| first_string(Some(item))),
         _ => None,
     }
 }

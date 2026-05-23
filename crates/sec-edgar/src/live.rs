@@ -30,10 +30,8 @@ use std::collections::BTreeMap;
 use std::time::{Duration, Instant};
 
 use async_trait::async_trait;
-use manifold::{
-    ExtractedNode, HtmlExtractBackend, HttpFetchProvider, ScraperHtmlBackend, WebFetchBackend,
-    WebFetchRequest,
-};
+use manifold::{HttpFetchProvider, WebFetchBackend, WebFetchRequest};
+use scraper::{Html, Selector};
 use serde::Deserialize;
 use thiserror::Error;
 
@@ -612,16 +610,22 @@ pub fn extract_section_headings(
     section_html: &str,
     opts: &HeadingExtractOptions,
 ) -> Result<Vec<String>, LiveError> {
-    let backend = ScraperHtmlBackend::new();
+    let document = Html::parse_document(section_html);
     let mut best: Vec<String> = Vec::new();
     let mut max_seen = 0usize;
     for selector in &opts.selectors {
-        let nodes = backend
-            .extract(section_html, &[selector.as_str()])
-            .map_err(|e| LiveError::Extract(e.to_string()))?;
-        let candidates: Vec<String> = nodes
-            .into_iter()
-            .map(|n: ExtractedNode| n.text)
+        let selector = Selector::parse(selector).map_err(|e| LiveError::Extract(e.to_string()))?;
+        let candidates: Vec<String> = document
+            .select(&selector)
+            .map(|element| {
+                element
+                    .text()
+                    .collect::<Vec<_>>()
+                    .join(" ")
+                    .split_whitespace()
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            })
             .filter(|text| {
                 let len = text.len();
                 len >= opts.min_heading_len && len <= opts.max_heading_len && text.ends_with('.')

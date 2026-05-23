@@ -51,8 +51,8 @@ use std::time::Instant;
 
 use async_trait::async_trait;
 use chrono::SecondsFormat;
-use manifold::{HttpFetchProvider, WebFetchBackend, WebFetchRequest};
 use manifold::xml;
+use manifold::{HttpFetchProvider, WebFetchBackend, WebFetchRequest};
 use thiserror::Error;
 
 use crate::error::ViesError;
@@ -133,7 +133,9 @@ impl ViesProvider for LiveViesProvider {
         let started = Instant::now();
         let ViesRequest::Validate { vat_number } = request;
         let envelope = build_check_vat_envelope(vat_number);
-        let body = post_soap(&self.options, &envelope).await.map_err(live_error)?;
+        let body = post_soap(&self.options, &envelope)
+            .await
+            .map_err(live_error)?;
         let validation = parse_check_vat_response(&body, vat_number).map_err(live_error)?;
 
         let request_json = serde_json::to_string(request)
@@ -239,8 +241,8 @@ fn parse_check_vat_response(
     body: &str,
     request_vat: &VatNumber,
 ) -> Result<VatValidation, LiveError> {
-    if let Some(faultstring) = xml::extract_first_text(body, "faultstring")
-        .map_err(|e| LiveError::Xml(e.to_string()))?
+    if let Some(faultstring) =
+        xml::extract_first_text(body, "faultstring").map_err(|e| LiveError::Xml(e.to_string()))?
     {
         let trimmed = faultstring.trim();
         if trimmed.eq_ignore_ascii_case("MS_UNAVAILABLE") {
@@ -428,7 +430,9 @@ mod tests {
             return;
         }
         let provider = LiveViesProvider::new();
-        let req = ViesRequest::Validate { vat_number: volvo() };
+        let req = ViesRequest::Validate {
+            vat_number: volvo(),
+        };
         let resp = provider
             .validate(&req, &embassy_pack::CallContext::default())
             .await

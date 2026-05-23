@@ -68,9 +68,18 @@ mod tests {
         // Intent: Crunchbase permalinks are canonical lowercase slugs;
         // callers may pass mixed-case input from URLs and it must be
         // normalized rather than rejected, matching Crunchbase's own behavior.
-        assert_eq!(OrganizationId::parse("anthropic").unwrap().as_str(), "anthropic");
-        assert_eq!(OrganizationId::parse("Anthropic").unwrap().as_str(), "anthropic");
-        assert_eq!(OrganizationId::parse("open-ai").unwrap().as_str(), "open-ai");
+        assert_eq!(
+            OrganizationId::parse("anthropic").unwrap().as_str(),
+            "anthropic"
+        );
+        assert_eq!(
+            OrganizationId::parse("Anthropic").unwrap().as_str(),
+            "anthropic"
+        );
+        assert_eq!(
+            OrganizationId::parse("open-ai").unwrap().as_str(),
+            "open-ai"
+        );
         assert_eq!(OrganizationId::parse("org123").unwrap().as_str(), "org123");
     }
 
@@ -78,10 +87,10 @@ mod tests {
     fn invalid_organization_ids_rejected() {
         // Intent: slugs violating Crunchbase's URL-slug rules must fail at
         // the boundary; passing them would produce silent 404s from the API.
-        assert!(OrganizationId::parse("-leading").is_err());       // leading hyphen
-        assert!(OrganizationId::parse("trailing-").is_err());      // trailing hyphen
+        assert!(OrganizationId::parse("-leading").is_err()); // leading hyphen
+        assert!(OrganizationId::parse("trailing-").is_err()); // trailing hyphen
         assert!(OrganizationId::parse("double--hyphen").is_err()); // consecutive hyphens
-        assert!(OrganizationId::parse("has space").is_err());      // space not allowed
+        assert!(OrganizationId::parse("has space").is_err()); // space not allowed
         assert!(OrganizationId::parse("has_underscore").is_err()); // underscore not allowed
     }
 

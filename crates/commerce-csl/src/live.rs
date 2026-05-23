@@ -148,7 +148,9 @@ impl CommerceCslProvider for LiveCommerceCslProvider {
         let CommerceCslRequest::Screen { subject } = request;
         let query = subject.name.trim().to_string();
         if query.is_empty() {
-            return Err(CommerceCslError::InvalidSubject("empty subject name".into()));
+            return Err(CommerceCslError::InvalidSubject(
+                "empty subject name".into(),
+            ));
         }
         let query_lc = query.to_ascii_lowercase();
 
@@ -191,10 +193,7 @@ impl CommerceCslProvider for LiveCommerceCslProvider {
                 },
             };
             records.push(Observation {
-                observation_id: format!(
-                    "obs:commerce-csl-live:{request_hash}:{}",
-                    records.len()
-                ),
+                observation_id: format!("obs:commerce-csl-live:{request_hash}:{}", records.len()),
                 request_hash: request_hash.clone(),
                 vendor: self.name().to_string(),
                 model: "opensanctions-us-trade-csl-csv-v1".to_string(),
@@ -353,7 +352,10 @@ entity-list-01,Organization,\"Entity Listed Inc.\",\"\",,\"ru\",,,\"BIS Entity L
         let req = CommerceCslRequest::Screen {
             subject: SanctionsSubject::parse("DC Ltd").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert_eq!(resp.records.len(), 1);
         assert_eq!(resp.records[0].content.match_type, MatchType::Alias);
         assert_eq!(resp.records[0].content.subject_name, "Denied Corp");
@@ -366,7 +368,10 @@ entity-list-01,Organization,\"Entity Listed Inc.\",\"\",,\"ru\",,,\"BIS Entity L
         let req = CommerceCslRequest::Screen {
             subject: SanctionsSubject::parse("Entity Listed").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert_eq!(resp.records.len(), 1);
         assert_eq!(resp.records[0].content.match_type, MatchType::Fuzzy);
         assert_eq!(
@@ -382,7 +387,10 @@ entity-list-01,Organization,\"Entity Listed Inc.\",\"\",,\"ru\",,,\"BIS Entity L
         let req = CommerceCslRequest::Screen {
             subject: SanctionsSubject::parse("Acme Corp").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert!(resp.records.is_empty());
     }
 
@@ -398,7 +406,10 @@ entity-list-01,Organization,\"Entity Listed Inc.\",\"\",,\"ru\",,,\"BIS Entity L
         let req = CommerceCslRequest::Screen {
             subject: SanctionsSubject::parse("Volvo AB").unwrap(),
         };
-        let resp = provider.screen(&req, &CallContext::default()).await.unwrap();
+        let resp = provider
+            .screen(&req, &CallContext::default())
+            .await
+            .unwrap();
         assert!(resp.records.is_empty());
     }
 }

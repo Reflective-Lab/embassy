@@ -64,13 +64,34 @@ mod tests {
         // Intent: all seven documented entity-type prefixes must be accepted
         // so the port can handle works, authors, institutions, sources,
         // concepts, publishers, and funders uniformly.
-        assert_eq!(OpenAlexId::parse("W2741809807").unwrap().as_str(), "W2741809807");
-        assert_eq!(OpenAlexId::parse("A5023888391").unwrap().as_str(), "A5023888391");
-        assert_eq!(OpenAlexId::parse("I27837315").unwrap().as_str(), "I27837315");
-        assert_eq!(OpenAlexId::parse("S1983995261").unwrap().as_str(), "S1983995261");
-        assert_eq!(OpenAlexId::parse("C2778407487").unwrap().as_str(), "C2778407487");
-        assert_eq!(OpenAlexId::parse("P4310320511").unwrap().as_str(), "P4310320511");
-        assert_eq!(OpenAlexId::parse("F4320332161").unwrap().as_str(), "F4320332161");
+        assert_eq!(
+            OpenAlexId::parse("W2741809807").unwrap().as_str(),
+            "W2741809807"
+        );
+        assert_eq!(
+            OpenAlexId::parse("A5023888391").unwrap().as_str(),
+            "A5023888391"
+        );
+        assert_eq!(
+            OpenAlexId::parse("I27837315").unwrap().as_str(),
+            "I27837315"
+        );
+        assert_eq!(
+            OpenAlexId::parse("S1983995261").unwrap().as_str(),
+            "S1983995261"
+        );
+        assert_eq!(
+            OpenAlexId::parse("C2778407487").unwrap().as_str(),
+            "C2778407487"
+        );
+        assert_eq!(
+            OpenAlexId::parse("P4310320511").unwrap().as_str(),
+            "P4310320511"
+        );
+        assert_eq!(
+            OpenAlexId::parse("F4320332161").unwrap().as_str(),
+            "F4320332161"
+        );
     }
 
     #[test]
@@ -78,11 +99,11 @@ mod tests {
         // Intent: any prefix that isn't one of the seven documented entity
         // types must be rejected to prevent silent misrouting in the
         // OpenAlex API.
-        assert!(OpenAlexId::parse("STUB-001").is_err());   // old stub value
-        assert!(OpenAlexId::parse("X12345").is_err());     // unknown prefix
-        assert!(OpenAlexId::parse("w12345").is_err());     // lowercase prefix
-        assert!(OpenAlexId::parse("W").is_err());          // no digits
-        assert!(OpenAlexId::parse("W123abc").is_err());    // non-digit after prefix
+        assert!(OpenAlexId::parse("STUB-001").is_err()); // old stub value
+        assert!(OpenAlexId::parse("X12345").is_err()); // unknown prefix
+        assert!(OpenAlexId::parse("w12345").is_err()); // lowercase prefix
+        assert!(OpenAlexId::parse("W").is_err()); // no digits
+        assert!(OpenAlexId::parse("W123abc").is_err()); // non-digit after prefix
     }
 
     #[test]

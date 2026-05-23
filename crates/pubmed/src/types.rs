@@ -61,9 +61,9 @@ mod tests {
         // Intent: PMIDs are purely numeric; any non-digit character is a
         // sign the caller has the wrong format and must be rejected at
         // the boundary before it reaches PubMed's API.
-        assert!(Pmid::parse("PMID38765432").is_err());  // text prefix
-        assert!(Pmid::parse("38765 432").is_err());     // internal space
-        assert!(Pmid::parse("387abc").is_err());        // letters mixed in
+        assert!(Pmid::parse("PMID38765432").is_err()); // text prefix
+        assert!(Pmid::parse("38765 432").is_err()); // internal space
+        assert!(Pmid::parse("387abc").is_err()); // letters mixed in
     }
 
     #[test]

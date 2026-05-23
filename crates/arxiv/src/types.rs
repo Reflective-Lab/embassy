@@ -12,18 +12,19 @@ use serde::{Deserialize, Serialize};
 use crate::error::ArxivError;
 
 fn is_new_style(s: &str) -> bool {
-    if let Some((prefix, rest)) = s.split_once('.') {
-        if prefix.len() == 4 && prefix.chars().all(|c| c.is_ascii_digit()) {
-            let base = rest.split('v').next().unwrap_or(rest);
-            let ver = rest.get(base.len()..).unwrap_or("");
-            let ver_ok = ver.is_empty()
-                || (ver.starts_with('v')
-                    && ver.len() > 1
-                    && ver[1..].chars().all(|c| c.is_ascii_digit()));
-            return (base.len() >= 4 && base.len() <= 5)
-                && base.chars().all(|c| c.is_ascii_digit())
-                && ver_ok;
-        }
+    if let Some((prefix, rest)) = s.split_once('.')
+        && prefix.len() == 4
+        && prefix.chars().all(|c| c.is_ascii_digit())
+    {
+        let base = rest.split('v').next().unwrap_or(rest);
+        let ver = rest.get(base.len()..).unwrap_or("");
+        let ver_ok = ver.is_empty()
+            || (ver.starts_with('v')
+                && ver.len() > 1
+                && ver[1..].chars().all(|c| c.is_ascii_digit()));
+        return (base.len() >= 4 && base.len() <= 5)
+            && base.chars().all(|c| c.is_ascii_digit())
+            && ver_ok;
     }
     false
 }
@@ -86,19 +87,28 @@ mod tests {
         // formats must be accepted so existing citation data from either era
         // can pass through the boundary unchanged.
         assert_eq!(ArxivId::parse("2301.00001").unwrap().as_str(), "2301.00001");
-        assert_eq!(ArxivId::parse("2301.00001v2").unwrap().as_str(), "2301.00001v2");
-        assert_eq!(ArxivId::parse("hep-th/9901001").unwrap().as_str(), "hep-th/9901001");
-        assert_eq!(ArxivId::parse("math/0503001").unwrap().as_str(), "math/0503001");
+        assert_eq!(
+            ArxivId::parse("2301.00001v2").unwrap().as_str(),
+            "2301.00001v2"
+        );
+        assert_eq!(
+            ArxivId::parse("hep-th/9901001").unwrap().as_str(),
+            "hep-th/9901001"
+        );
+        assert_eq!(
+            ArxivId::parse("math/0503001").unwrap().as_str(),
+            "math/0503001"
+        );
     }
 
     #[test]
     fn invalid_arxiv_ids_rejected() {
         // Intent: malformed IDs that don't match either documented format must
         // be caught here rather than causing a cryptic 404 from the arXiv API.
-        assert!(ArxivId::parse("STUB-001").is_err());      // old stub value
-        assert!(ArxivId::parse("2301.1").is_err());        // too few digits after dot
-        assert!(ArxivId::parse("2301.123456").is_err());   // too many digits after dot
-        assert!(ArxivId::parse("23010001").is_err());      // missing dot, no slash
+        assert!(ArxivId::parse("STUB-001").is_err()); // old stub value
+        assert!(ArxivId::parse("2301.1").is_err()); // too few digits after dot
+        assert!(ArxivId::parse("2301.123456").is_err()); // too many digits after dot
+        assert!(ArxivId::parse("23010001").is_err()); // missing dot, no slash
     }
 
     #[test]
