@@ -478,8 +478,8 @@ impl WireNotice {
             .ok_or_else(|| LiveError::Parse("missing publication-number".into()))?;
         let notice_id = TedNoticeId::parse(&pubnum)
             .map_err(|e| LiveError::Parse(format!("invalid publication-number `{pubnum}`: {e}")))?;
-        let title = first_string(self.notice_title.as_ref())
-            .unwrap_or_else(|| "(untitled)".to_string());
+        let title =
+            first_string(self.notice_title.as_ref()).unwrap_or_else(|| "(untitled)".to_string());
         let contracting_authority = first_string(self.buyer_name.as_ref())
             .unwrap_or_else(|| "(unknown authority)".to_string());
         let country = match first_string(self.organisation_country_buyer.as_ref()) {
@@ -780,10 +780,7 @@ mod tests {
             "swe": "Svenska",
             "hun": "Magyar",
         });
-        assert_eq!(
-            first_string(Some(&no_english)).as_deref(),
-            Some("Svenska")
-        );
+        assert_eq!(first_string(Some(&no_english)).as_deref(), Some("Svenska"));
 
         // Neither English nor Swedish → fall back to any non-empty.
         let no_preferred = serde_json::json!({

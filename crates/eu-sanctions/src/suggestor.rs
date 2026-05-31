@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -53,8 +53,8 @@ impl<P: EuSanctionsProvider + 'static> Suggestor for EuSanctionsLookupSuggestor<
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        EU_SANCTIONS_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(EU_SANCTIONS_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: EuSanctionsProvider + 'static> Suggestor for EuSanctionsLookupSuggestor<
                         ContextKey::Hypotheses,
                         format!("eu_sanctions:{}:{idx}", seed.id()),
                         payload,
-                        EU_SANCTIONS_PROVENANCE.as_str(),
+                        Provenance::from(EU_SANCTIONS_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.99),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = EuSanctionsLookupSuggestor::new(Arc::new(StubEuSanctionsProvider));
-        assert_eq!(s.provenance(), "eu_sanctions");
+        assert_eq!(s.provenance().as_str(), "eu_sanctions");
     }
 
     #[test]

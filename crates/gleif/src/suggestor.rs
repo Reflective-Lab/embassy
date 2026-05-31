@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -58,8 +58,8 @@ impl<P: GleifProvider + 'static> Suggestor for GleifLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        GLEIF_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(GLEIF_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: GleifProvider + 'static> Suggestor for GleifLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("gleif:{}:{idx}", seed.id()),
                         payload,
-                        GLEIF_PROVENANCE.as_str(),
+                        Provenance::from(GLEIF_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.98),
                 );
@@ -151,7 +151,7 @@ mod tests {
         // query in the workspace will eventually join on this
         // provenance string.
         let s = GleifLookupSuggestor::new(Arc::new(StubGleifProvider));
-        assert_eq!(s.provenance(), "gleif");
+        assert_eq!(s.provenance().as_str(), "gleif");
     }
 
     #[test]

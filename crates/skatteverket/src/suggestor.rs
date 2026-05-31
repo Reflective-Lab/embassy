@@ -10,7 +10,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -54,8 +54,8 @@ impl<P: SkatteverketProvider + 'static> Suggestor for SkatteverketLookupSuggesto
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        SKATTEVERKET_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(SKATTEVERKET_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -111,7 +111,7 @@ impl<P: SkatteverketProvider + 'static> Suggestor for SkatteverketLookupSuggesto
                         ContextKey::Hypotheses,
                         format!("skatteverket:{}:{idx}", seed.id()),
                         payload,
-                        SKATTEVERKET_PROVENANCE.as_str(),
+                        Provenance::from(SKATTEVERKET_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.97),
                 );
@@ -140,7 +140,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = SkatteverketLookupSuggestor::new(Arc::new(StubSkatteverketProvider));
-        assert_eq!(s.provenance(), "skatteverket");
+        assert_eq!(s.provenance().as_str(), "skatteverket");
     }
 
     #[test]

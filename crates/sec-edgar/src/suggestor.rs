@@ -14,7 +14,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -81,8 +81,8 @@ impl<P: SecEdgarProvider + 'static> Suggestor for SecFilingSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        SEC_EDGAR_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(SEC_EDGAR_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -138,7 +138,7 @@ impl<P: SecEdgarProvider + 'static> Suggestor for SecFilingSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("sec-edgar:{}:{idx}", seed.id()),
                         payload,
-                        SEC_EDGAR_PROVENANCE.as_str(),
+                        Provenance::from(SEC_EDGAR_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -180,7 +180,7 @@ mod tests {
         // different string, audit queries scoped to SEC will silently
         // miss new filings.
         let s = SecFilingSuggestor::new(Arc::new(StubSecEdgarProvider));
-        assert_eq!(s.provenance(), "sec-edgar");
+        assert_eq!(s.provenance().as_str(), "sec-edgar");
     }
 
     #[test]

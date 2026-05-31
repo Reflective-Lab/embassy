@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -58,8 +58,8 @@ impl<P: OfacSlsProvider + 'static> Suggestor for OfacSlsLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        OFAC_SLS_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(OFAC_SLS_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: OfacSlsProvider + 'static> Suggestor for OfacSlsLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("ofac_sls:{}:{idx}", seed.id()),
                         payload,
-                        OFAC_SLS_PROVENANCE.as_str(),
+                        Provenance::from(OFAC_SLS_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.99),
                 );
@@ -147,7 +147,7 @@ mod tests {
         // ofac_sls provenance so compliance log searches scoped to
         // that string hit every record.
         let s = OfacSlsLookupSuggestor::new(Arc::new(StubOfacSlsProvider));
-        assert_eq!(s.provenance(), "ofac_sls");
+        assert_eq!(s.provenance().as_str(), "ofac_sls");
     }
 
     #[test]

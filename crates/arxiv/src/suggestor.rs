@@ -15,7 +15,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -64,8 +64,8 @@ impl<P: ArxivProvider + 'static> Suggestor for ArxivLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        ARXIV_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(ARXIV_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: ArxivProvider + 'static> Suggestor for ArxivLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("arxiv:{}:{idx}", seed.id()),
                         payload_value,
-                        ARXIV_PROVENANCE.as_str(),
+                        Provenance::from(ARXIV_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = ArxivLookupSuggestor::new(Arc::new(StubArxivProvider));
-        assert_eq!(s.provenance(), ARXIV_PROVENANCE.as_str());
+        assert_eq!(s.provenance(), Provenance::from(ARXIV_PROVENANCE.as_str()));
     }
 
     #[test]

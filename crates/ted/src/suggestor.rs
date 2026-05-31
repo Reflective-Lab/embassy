@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -53,8 +53,8 @@ impl<P: TedProvider + 'static> Suggestor for TedLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        TED_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(TED_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: TedProvider + 'static> Suggestor for TedLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("ted:{}:{idx}", seed.id()),
                         payload,
-                        TED_PROVENANCE.as_str(),
+                        Provenance::from(TED_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = TedLookupSuggestor::new(Arc::new(StubTedProvider));
-        assert_eq!(s.provenance(), "ted");
+        assert_eq!(s.provenance().as_str(), "ted");
     }
 
     #[test]

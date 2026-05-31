@@ -15,7 +15,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -64,8 +64,8 @@ impl<P: WikidataProvider + 'static> Suggestor for WikidataLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        WIKIDATA_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(WIKIDATA_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: WikidataProvider + 'static> Suggestor for WikidataLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("wikidata:{}:{idx}", seed.id()),
                         payload_value,
-                        WIKIDATA_PROVENANCE.as_str(),
+                        Provenance::from(WIKIDATA_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,10 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = WikidataLookupSuggestor::new(Arc::new(StubWikidataProvider));
-        assert_eq!(s.provenance(), WIKIDATA_PROVENANCE.as_str());
+        assert_eq!(
+            s.provenance(),
+            Provenance::from(WIKIDATA_PROVENANCE.as_str())
+        );
     }
 
     #[test]

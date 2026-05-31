@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -53,8 +53,8 @@ impl<P: SamGovProvider + 'static> Suggestor for SamGovLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        SAM_GOV_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(SAM_GOV_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: SamGovProvider + 'static> Suggestor for SamGovLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("sam_gov:{}:{idx}", seed.id()),
                         payload,
-                        SAM_GOV_PROVENANCE.as_str(),
+                        Provenance::from(SAM_GOV_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = SamGovLookupSuggestor::new(Arc::new(StubSamGovProvider));
-        assert_eq!(s.provenance(), "sam_gov");
+        assert_eq!(s.provenance().as_str(), "sam_gov");
     }
 
     #[test]

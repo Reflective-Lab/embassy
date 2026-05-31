@@ -47,6 +47,7 @@ repository = "https://github.com/Reflective-Lab/embassy-ports"
 # kernel re-exports + polars_bridge). Required by ports that emit
 # Suggestors (sec-edgar, bolagsverket, future).
 converge-pack = "3.9.1"
+converge-manifold-adapters = { path = "../manifold-adapters/crates/manifold" }
 
 # Manifold transport adapters — generic HTTP fetch + HTML extract. Ports
 # that need real network/HTML logic (sec-edgar's `live` feature, etc.)
@@ -99,5 +100,23 @@ codegen-units = 1
 # carries the POST + xml feature additions (search.rs WebFetchMethod /
 # WebFetchRequest::with_body / manifold::xml) lands. Drop this patch
 # once that release is on crates.io.
+
 [patch.crates-io]
+converge-pack         = { path = "../../bedrock-platform/converge/crates/pack" }
 converge-manifold-adapters = { path = "../manifold-adapters/crates/manifold" }
+converge-kernel       = { path = "../../bedrock-platform/converge/crates/kernel" }
+converge-core         = { path = "../../bedrock-platform/converge/crates/core" }
+converge-model        = { path = "../../bedrock-platform/converge/crates/model" }
+converge-optimization = { path = "../../bedrock-platform/converge/crates/optimization" }
+converge-runtime      = { path = "../../bedrock-platform/converge/crates/runtime" }
+converge-experience   = { path = "../../bedrock-platform/converge/crates/experience" }
+converge-provider     = { path = "../../bedrock-platform/converge/crates/provider" }
+organism-pack         = { path = "../../bedrock-platform/organism/crates/pack" }
+organism-intent       = { path = "../../bedrock-platform/organism/crates/intent" }
+organism-planning     = { path = "../../bedrock-platform/organism/crates/planning" }
+organism-adversarial  = { path = "../../bedrock-platform/organism/crates/adversarial" }
+organism-simulation   = { path = "../../bedrock-platform/organism/crates/simulation" }
+organism-learning     = { path = "../../bedrock-platform/organism/crates/learning" }
+organism-runtime      = { path = "../../bedrock-platform/organism/crates/runtime" }
+organism-dynamics     = { path = "../../bedrock-platform/organism/crates/dynamics" }
+

@@ -15,7 +15,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -64,8 +64,8 @@ impl<P: CompaniesHouseProvider + 'static> Suggestor for CompaniesHouseLookupSugg
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        COMPANIES_HOUSE_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(COMPANIES_HOUSE_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: CompaniesHouseProvider + 'static> Suggestor for CompaniesHouseLookupSugg
                         ContextKey::Hypotheses,
                         format!("companies-house:{}:{idx}", seed.id()),
                         payload_value,
-                        COMPANIES_HOUSE_PROVENANCE.as_str(),
+                        Provenance::from(COMPANIES_HOUSE_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,10 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = CompaniesHouseLookupSuggestor::new(Arc::new(StubCompaniesHouseProvider));
-        assert_eq!(s.provenance(), COMPANIES_HOUSE_PROVENANCE.as_str());
+        assert_eq!(
+            s.provenance(),
+            Provenance::from(COMPANIES_HOUSE_PROVENANCE.as_str())
+        );
     }
 
     #[test]

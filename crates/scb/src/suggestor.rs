@@ -15,7 +15,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -64,8 +64,8 @@ impl<P: ScbProvider + 'static> Suggestor for ScbLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        SCB_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(SCB_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: ScbProvider + 'static> Suggestor for ScbLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("scb:{}:{idx}", seed.id()),
                         payload_value,
-                        SCB_PROVENANCE.as_str(),
+                        Provenance::from(SCB_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = ScbLookupSuggestor::new(Arc::new(StubScbProvider));
-        assert_eq!(s.provenance(), SCB_PROVENANCE.as_str());
+        assert_eq!(s.provenance(), Provenance::from(SCB_PROVENANCE.as_str()));
     }
 
     #[test]

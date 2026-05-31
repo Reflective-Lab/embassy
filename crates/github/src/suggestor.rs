@@ -15,7 +15,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -64,8 +64,8 @@ impl<P: GithubProvider + 'static> Suggestor for GithubLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        GITHUB_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(GITHUB_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: GithubProvider + 'static> Suggestor for GithubLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("github:{}:{idx}", seed.id()),
                         payload_value,
-                        GITHUB_PROVENANCE.as_str(),
+                        Provenance::from(GITHUB_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = GithubLookupSuggestor::new(Arc::new(StubGithubProvider));
-        assert_eq!(s.provenance(), GITHUB_PROVENANCE.as_str());
+        assert_eq!(s.provenance(), Provenance::from(GITHUB_PROVENANCE.as_str()));
     }
 
     #[test]

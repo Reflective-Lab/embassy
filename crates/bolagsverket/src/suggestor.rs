@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -58,8 +58,8 @@ impl<P: BolagsverketProvider + 'static> Suggestor for BolagsverketLookupSuggesto
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        BOLAGSVERKET_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(BOLAGSVERKET_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: BolagsverketProvider + 'static> Suggestor for BolagsverketLookupSuggesto
                         ContextKey::Hypotheses,
                         format!("bolagsverket:{}:{idx}", seed.id()),
                         payload,
-                        BOLAGSVERKET_PROVENANCE.as_str(),
+                        Provenance::from(BOLAGSVERKET_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -149,7 +149,7 @@ mod tests {
         // Intent: audit log scope filter `provenance="bolagsverket"`
         // must always hit every fact this Suggestor emits.
         let s = BolagsverketLookupSuggestor::new(Arc::new(StubBolagsverketProvider));
-        assert_eq!(s.provenance(), "bolagsverket");
+        assert_eq!(s.provenance().as_str(), "bolagsverket");
     }
 
     #[test]

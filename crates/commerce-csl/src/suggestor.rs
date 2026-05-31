@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -53,8 +53,8 @@ impl<P: CommerceCslProvider + 'static> Suggestor for CommerceCslLookupSuggestor<
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        COMMERCE_CSL_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(COMMERCE_CSL_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: CommerceCslProvider + 'static> Suggestor for CommerceCslLookupSuggestor<
                         ContextKey::Hypotheses,
                         format!("commerce_csl:{}:{idx}", seed.id()),
                         payload,
-                        COMMERCE_CSL_PROVENANCE.as_str(),
+                        Provenance::from(COMMERCE_CSL_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.99),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = CommerceCslLookupSuggestor::new(Arc::new(StubCommerceCslProvider));
-        assert_eq!(s.provenance(), "commerce_csl");
+        assert_eq!(s.provenance().as_str(), "commerce_csl");
     }
 
     #[test]

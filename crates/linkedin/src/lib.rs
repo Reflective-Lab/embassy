@@ -18,7 +18,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use embassy_pack::{CallContext, Observation, content_hash};
@@ -173,8 +173,8 @@ impl<P: LinkedInProvider + 'static> Suggestor for LinkedInLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        LINKEDIN_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(LINKEDIN_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -226,7 +226,7 @@ impl<P: LinkedInProvider + 'static> Suggestor for LinkedInLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("linkedin:{}:{idx}", seed.id()),
                         payload,
-                        LINKEDIN_PROVENANCE.as_str(),
+                        Provenance::from(LINKEDIN_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.95),
                 );
@@ -328,7 +328,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_linkedin() {
         let s = LinkedInLookupSuggestor::new(Arc::new(StubLinkedInProvider));
-        assert_eq!(s.provenance(), "linkedin");
+        assert_eq!(s.provenance().as_str(), "linkedin");
     }
 
     #[test]

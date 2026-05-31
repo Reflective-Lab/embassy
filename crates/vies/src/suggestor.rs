@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use converge_pack::{
-    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact,
+    AgentEffect, Context, ContextKey, ExecutionIdentity, FactPayload, ProposedFact, Provenance,
     ProvenanceSource, Suggestor,
 };
 use serde::{Deserialize, Serialize};
@@ -58,8 +58,8 @@ impl<P: ViesProvider + 'static> Suggestor for ViesLookupSuggestor<P> {
         &[ContextKey::Seeds]
     }
 
-    fn provenance(&self) -> &'static str {
-        VIES_PROVENANCE.as_str()
+    fn provenance(&self) -> Provenance {
+        Provenance::from(VIES_PROVENANCE.as_str())
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: ViesProvider + 'static> Suggestor for ViesLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("vies:{}:{idx}", seed.id()),
                         payload,
-                        VIES_PROVENANCE.as_str(),
+                        Provenance::from(VIES_PROVENANCE.as_str()),
                     )
                     .with_confidence(0.98),
                 );
@@ -148,7 +148,7 @@ mod tests {
         // regulatory artefacts; mis-tagging breaks the tax-compliance
         // story.
         let s = ViesLookupSuggestor::new(Arc::new(StubViesProvider));
-        assert_eq!(s.provenance(), "vies");
+        assert_eq!(s.provenance().as_str(), "vies");
     }
 
     #[test]

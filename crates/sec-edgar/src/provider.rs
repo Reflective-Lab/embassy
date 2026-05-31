@@ -98,7 +98,7 @@ impl SecEdgarProvider for StubSecEdgarProvider {
                 (
                     cik.clone(),
                     AccessionNumber::parse(
-                        format!("{prefix}-23-{suffix}", prefix = cik.as_str(),),
+                        format!("{prefix}-23-{suffix}", prefix = cik.as_str()),
                     )?,
                     form_type.clone(),
                 )
