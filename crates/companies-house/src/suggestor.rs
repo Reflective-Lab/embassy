@@ -65,7 +65,7 @@ impl<P: CompaniesHouseProvider + 'static> Suggestor for CompaniesHouseLookupSugg
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(COMPANIES_HOUSE_PROVENANCE.as_str())
+        COMPANIES_HOUSE_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: CompaniesHouseProvider + 'static> Suggestor for CompaniesHouseLookupSugg
                         ContextKey::Hypotheses,
                         format!("companies-house:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(COMPANIES_HOUSE_PROVENANCE.as_str()),
+                        COMPANIES_HOUSE_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,10 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = CompaniesHouseLookupSuggestor::new(Arc::new(StubCompaniesHouseProvider));
-        assert_eq!(
-            s.provenance(),
-            Provenance::from(COMPANIES_HOUSE_PROVENANCE.as_str())
-        );
+        assert_eq!(s.provenance(), COMPANIES_HOUSE_PROVENANCE.provenance());
     }
 
     #[test]

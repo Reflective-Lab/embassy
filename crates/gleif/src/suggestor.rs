@@ -59,7 +59,7 @@ impl<P: GleifProvider + 'static> Suggestor for GleifLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(GLEIF_PROVENANCE.as_str())
+        GLEIF_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: GleifProvider + 'static> Suggestor for GleifLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("gleif:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(GLEIF_PROVENANCE.as_str()),
+                        GLEIF_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.98),
                 );
@@ -151,7 +151,7 @@ mod tests {
         // query in the workspace will eventually join on this
         // provenance string.
         let s = GleifLookupSuggestor::new(Arc::new(StubGleifProvider));
-        assert_eq!(s.provenance().as_str(), "gleif");
+        assert_eq!(s.provenance(), GLEIF_PROVENANCE.provenance());
     }
 
     #[test]

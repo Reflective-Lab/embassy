@@ -59,7 +59,7 @@ impl<P: ViesProvider + 'static> Suggestor for ViesLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(VIES_PROVENANCE.as_str())
+        VIES_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: ViesProvider + 'static> Suggestor for ViesLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("vies:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(VIES_PROVENANCE.as_str()),
+                        VIES_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.98),
                 );
@@ -148,7 +148,7 @@ mod tests {
         // regulatory artefacts; mis-tagging breaks the tax-compliance
         // story.
         let s = ViesLookupSuggestor::new(Arc::new(StubViesProvider));
-        assert_eq!(s.provenance().as_str(), "vies");
+        assert_eq!(s.provenance(), VIES_PROVENANCE.provenance());
     }
 
     #[test]

@@ -36,7 +36,7 @@ members = [
 ]
 
 [workspace.package]
-version = "1.3.0"
+version = "1.3.1"
 edition = "2024"
 rust-version = "1.94.0"
 license = "MIT"
@@ -46,7 +46,7 @@ repository = "https://github.com/Reflective-Lab/embassy-ports"
 # Converge platform — pinned to 3.9.1 (the release that introduced the
 # kernel re-exports + polars_bridge). Required by ports that emit
 # Suggestors (sec-edgar, bolagsverket, future).
-converge-pack = "3.9.1"
+converge-pack = "3.9.2"
 converge-manifold-adapters = { path = "../manifold-adapters/crates/manifold" }
 
 # Manifold transport adapters — generic HTTP fetch + HTML extract. Ports

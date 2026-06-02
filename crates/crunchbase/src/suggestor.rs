@@ -65,7 +65,7 @@ impl<P: CrunchbaseProvider + 'static> Suggestor for CrunchbaseLookupSuggestor<P>
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(CRUNCHBASE_PROVENANCE.as_str())
+        CRUNCHBASE_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: CrunchbaseProvider + 'static> Suggestor for CrunchbaseLookupSuggestor<P>
                         ContextKey::Hypotheses,
                         format!("crunchbase:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(CRUNCHBASE_PROVENANCE.as_str()),
+                        CRUNCHBASE_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,10 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = CrunchbaseLookupSuggestor::new(Arc::new(StubCrunchbaseProvider));
-        assert_eq!(
-            s.provenance(),
-            Provenance::from(CRUNCHBASE_PROVENANCE.as_str())
-        );
+        assert_eq!(s.provenance(), CRUNCHBASE_PROVENANCE.provenance());
     }
 
     #[test]

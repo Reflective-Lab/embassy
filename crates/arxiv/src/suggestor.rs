@@ -65,7 +65,7 @@ impl<P: ArxivProvider + 'static> Suggestor for ArxivLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(ARXIV_PROVENANCE.as_str())
+        ARXIV_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: ArxivProvider + 'static> Suggestor for ArxivLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("arxiv:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(ARXIV_PROVENANCE.as_str()),
+                        ARXIV_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = ArxivLookupSuggestor::new(Arc::new(StubArxivProvider));
-        assert_eq!(s.provenance(), Provenance::from(ARXIV_PROVENANCE.as_str()));
+        assert_eq!(s.provenance(), ARXIV_PROVENANCE.provenance());
     }
 
     #[test]

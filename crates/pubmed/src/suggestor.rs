@@ -65,7 +65,7 @@ impl<P: PubmedProvider + 'static> Suggestor for PubmedLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(PUBMED_PROVENANCE.as_str())
+        PUBMED_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: PubmedProvider + 'static> Suggestor for PubmedLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("pubmed:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(PUBMED_PROVENANCE.as_str()),
+                        PUBMED_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = PubmedLookupSuggestor::new(Arc::new(StubPubmedProvider));
-        assert_eq!(s.provenance(), Provenance::from(PUBMED_PROVENANCE.as_str()));
+        assert_eq!(s.provenance(), PUBMED_PROVENANCE.provenance());
     }
 
     #[test]

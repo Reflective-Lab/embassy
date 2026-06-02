@@ -65,7 +65,7 @@ impl<P: EpoProvider + 'static> Suggestor for EpoLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(EPO_PROVENANCE.as_str())
+        EPO_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: EpoProvider + 'static> Suggestor for EpoLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("epo:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(EPO_PROVENANCE.as_str()),
+                        EPO_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = EpoLookupSuggestor::new(Arc::new(StubEpoProvider));
-        assert_eq!(s.provenance(), Provenance::from(EPO_PROVENANCE.as_str()));
+        assert_eq!(s.provenance(), EPO_PROVENANCE.provenance());
     }
 
     #[test]

@@ -54,7 +54,7 @@ impl<P: CommerceCslProvider + 'static> Suggestor for CommerceCslLookupSuggestor<
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(COMMERCE_CSL_PROVENANCE.as_str())
+        COMMERCE_CSL_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: CommerceCslProvider + 'static> Suggestor for CommerceCslLookupSuggestor<
                         ContextKey::Hypotheses,
                         format!("commerce_csl:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(COMMERCE_CSL_PROVENANCE.as_str()),
+                        COMMERCE_CSL_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.99),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = CommerceCslLookupSuggestor::new(Arc::new(StubCommerceCslProvider));
-        assert_eq!(s.provenance().as_str(), "commerce_csl");
+        assert_eq!(s.provenance(), COMMERCE_CSL_PROVENANCE.provenance());
     }
 
     #[test]

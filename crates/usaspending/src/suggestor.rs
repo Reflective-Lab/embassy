@@ -54,7 +54,7 @@ impl<P: UsaspendingProvider + 'static> Suggestor for UsaspendingLookupSuggestor<
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(USASPENDING_PROVENANCE.as_str())
+        USASPENDING_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: UsaspendingProvider + 'static> Suggestor for UsaspendingLookupSuggestor<
                         ContextKey::Hypotheses,
                         format!("usaspending:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(USASPENDING_PROVENANCE.as_str()),
+                        USASPENDING_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = UsaspendingLookupSuggestor::new(Arc::new(StubUsaspendingProvider));
-        assert_eq!(s.provenance().as_str(), "usaspending");
+        assert_eq!(s.provenance(), USASPENDING_PROVENANCE.provenance());
     }
 
     #[test]

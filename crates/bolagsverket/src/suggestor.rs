@@ -59,7 +59,7 @@ impl<P: BolagsverketProvider + 'static> Suggestor for BolagsverketLookupSuggesto
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(BOLAGSVERKET_PROVENANCE.as_str())
+        BOLAGSVERKET_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: BolagsverketProvider + 'static> Suggestor for BolagsverketLookupSuggesto
                         ContextKey::Hypotheses,
                         format!("bolagsverket:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(BOLAGSVERKET_PROVENANCE.as_str()),
+                        BOLAGSVERKET_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -149,7 +149,7 @@ mod tests {
         // Intent: audit log scope filter `provenance="bolagsverket"`
         // must always hit every fact this Suggestor emits.
         let s = BolagsverketLookupSuggestor::new(Arc::new(StubBolagsverketProvider));
-        assert_eq!(s.provenance().as_str(), "bolagsverket");
+        assert_eq!(s.provenance(), BOLAGSVERKET_PROVENANCE.provenance());
     }
 
     #[test]

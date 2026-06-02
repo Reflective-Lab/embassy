@@ -54,7 +54,7 @@ impl<P: TedProvider + 'static> Suggestor for TedLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(TED_PROVENANCE.as_str())
+        TED_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: TedProvider + 'static> Suggestor for TedLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("ted:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(TED_PROVENANCE.as_str()),
+                        TED_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = TedLookupSuggestor::new(Arc::new(StubTedProvider));
-        assert_eq!(s.provenance().as_str(), "ted");
+        assert_eq!(s.provenance(), TED_PROVENANCE.provenance());
     }
 
     #[test]

@@ -59,7 +59,7 @@ impl<P: OfacSlsProvider + 'static> Suggestor for OfacSlsLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(OFAC_SLS_PROVENANCE.as_str())
+        OFAC_SLS_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -115,7 +115,7 @@ impl<P: OfacSlsProvider + 'static> Suggestor for OfacSlsLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("ofac_sls:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(OFAC_SLS_PROVENANCE.as_str()),
+                        OFAC_SLS_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.99),
                 );
@@ -147,7 +147,7 @@ mod tests {
         // ofac_sls provenance so compliance log searches scoped to
         // that string hit every record.
         let s = OfacSlsLookupSuggestor::new(Arc::new(StubOfacSlsProvider));
-        assert_eq!(s.provenance().as_str(), "ofac_sls");
+        assert_eq!(s.provenance(), OFAC_SLS_PROVENANCE.provenance());
     }
 
     #[test]

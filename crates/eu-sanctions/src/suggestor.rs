@@ -54,7 +54,7 @@ impl<P: EuSanctionsProvider + 'static> Suggestor for EuSanctionsLookupSuggestor<
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(EU_SANCTIONS_PROVENANCE.as_str())
+        EU_SANCTIONS_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: EuSanctionsProvider + 'static> Suggestor for EuSanctionsLookupSuggestor<
                         ContextKey::Hypotheses,
                         format!("eu_sanctions:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(EU_SANCTIONS_PROVENANCE.as_str()),
+                        EU_SANCTIONS_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.99),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = EuSanctionsLookupSuggestor::new(Arc::new(StubEuSanctionsProvider));
-        assert_eq!(s.provenance().as_str(), "eu_sanctions");
+        assert_eq!(s.provenance(), EU_SANCTIONS_PROVENANCE.provenance());
     }
 
     #[test]

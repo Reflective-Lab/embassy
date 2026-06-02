@@ -65,7 +65,7 @@ impl<P: GithubProvider + 'static> Suggestor for GithubLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(GITHUB_PROVENANCE.as_str())
+        GITHUB_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: GithubProvider + 'static> Suggestor for GithubLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("github:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(GITHUB_PROVENANCE.as_str()),
+                        GITHUB_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = GithubLookupSuggestor::new(Arc::new(StubGithubProvider));
-        assert_eq!(s.provenance(), Provenance::from(GITHUB_PROVENANCE.as_str()));
+        assert_eq!(s.provenance(), GITHUB_PROVENANCE.provenance());
     }
 
     #[test]

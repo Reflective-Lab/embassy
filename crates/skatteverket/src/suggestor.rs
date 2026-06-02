@@ -55,7 +55,7 @@ impl<P: SkatteverketProvider + 'static> Suggestor for SkatteverketLookupSuggesto
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(SKATTEVERKET_PROVENANCE.as_str())
+        SKATTEVERKET_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -111,7 +111,7 @@ impl<P: SkatteverketProvider + 'static> Suggestor for SkatteverketLookupSuggesto
                         ContextKey::Hypotheses,
                         format!("skatteverket:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(SKATTEVERKET_PROVENANCE.as_str()),
+                        SKATTEVERKET_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.97),
                 );
@@ -140,7 +140,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = SkatteverketLookupSuggestor::new(Arc::new(StubSkatteverketProvider));
-        assert_eq!(s.provenance().as_str(), "skatteverket");
+        assert_eq!(s.provenance(), SKATTEVERKET_PROVENANCE.provenance());
     }
 
     #[test]

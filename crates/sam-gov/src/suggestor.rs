@@ -54,7 +54,7 @@ impl<P: SamGovProvider + 'static> Suggestor for SamGovLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(SAM_GOV_PROVENANCE.as_str())
+        SAM_GOV_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -110,7 +110,7 @@ impl<P: SamGovProvider + 'static> Suggestor for SamGovLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("sam_gov:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(SAM_GOV_PROVENANCE.as_str()),
+                        SAM_GOV_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_canonical() {
         let s = SamGovLookupSuggestor::new(Arc::new(StubSamGovProvider));
-        assert_eq!(s.provenance().as_str(), "sam_gov");
+        assert_eq!(s.provenance(), SAM_GOV_PROVENANCE.provenance());
     }
 
     #[test]

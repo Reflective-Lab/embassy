@@ -65,7 +65,7 @@ impl<P: WikidataProvider + 'static> Suggestor for WikidataLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(WIKIDATA_PROVENANCE.as_str())
+        WIKIDATA_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: WikidataProvider + 'static> Suggestor for WikidataLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("wikidata:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(WIKIDATA_PROVENANCE.as_str()),
+                        WIKIDATA_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,10 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = WikidataLookupSuggestor::new(Arc::new(StubWikidataProvider));
-        assert_eq!(
-            s.provenance(),
-            Provenance::from(WIKIDATA_PROVENANCE.as_str())
-        );
+        assert_eq!(s.provenance(), WIKIDATA_PROVENANCE.provenance());
     }
 
     #[test]

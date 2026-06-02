@@ -65,7 +65,7 @@ impl<P: UsptoProvider + 'static> Suggestor for UsptoLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(USPTO_PROVENANCE.as_str())
+        USPTO_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: UsptoProvider + 'static> Suggestor for UsptoLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("uspto:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(USPTO_PROVENANCE.as_str()),
+                        USPTO_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,7 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = UsptoLookupSuggestor::new(Arc::new(StubUsptoProvider));
-        assert_eq!(s.provenance(), Provenance::from(USPTO_PROVENANCE.as_str()));
+        assert_eq!(s.provenance(), USPTO_PROVENANCE.provenance());
     }
 
     #[test]

@@ -97,9 +97,7 @@ impl SecEdgarProvider for StubSecEdgarProvider {
                 let suffix = format!("{:06}", suffix_u64 % 1_000_000);
                 (
                     cik.clone(),
-                    AccessionNumber::parse(
-                        format!("{prefix}-23-{suffix}", prefix = cik.as_str()),
-                    )?,
+                    AccessionNumber::parse(format!("{prefix}-23-{suffix}", prefix = cik.as_str()))?,
                     form_type.clone(),
                 )
             }

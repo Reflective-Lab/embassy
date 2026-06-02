@@ -65,7 +65,7 @@ impl<P: OpenAlexProvider + 'static> Suggestor for OpenAlexLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(OPENALEX_PROVENANCE.as_str())
+        OPENALEX_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -121,7 +121,7 @@ impl<P: OpenAlexProvider + 'static> Suggestor for OpenAlexLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("openalex:{}:{idx}", seed.id()),
                         payload_value,
-                        Provenance::from(OPENALEX_PROVENANCE.as_str()),
+                        OPENALEX_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -157,10 +157,7 @@ mod tests {
         // with the canonical port provenance string so audit log
         // searches scoped to that string hit every record.
         let s = OpenAlexLookupSuggestor::new(Arc::new(StubOpenAlexProvider));
-        assert_eq!(
-            s.provenance(),
-            Provenance::from(OPENALEX_PROVENANCE.as_str())
-        );
+        assert_eq!(s.provenance(), OPENALEX_PROVENANCE.provenance());
     }
 
     #[test]

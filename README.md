@@ -76,6 +76,15 @@ may belong in Embassy, but `PartnerPayout`, `Subscription`,
 `EntitlementGrant`, and `RevenueShareAgreement` belong in Reflective Commerce
 Rails because Reflective bears the commercial consequence.
 
+## Current Port Families
+
+The workspace now includes `pack`, `linkedin`, `sec-edgar`, `bolagsverket`,
+`gleif`, `vies`, `ofac-sls`, `eu-sanctions`, `commerce-csl`, `sam-gov`,
+`usaspending`, `ted`, `skatteverket`, `uspto`, `crunchbase`, `github`,
+`pubmed`, `arxiv`, `openalex`, `wikidata`, `companies-house`, `scb`, and
+`epo`. Some are live-provider surfaces; others are typed skeletons that should
+grow only when an app or arena case pulls on the external source.
+
 ## Repository Layout
 
 ```text
@@ -88,6 +97,9 @@ crates/linkedin/
 crates/sec-edgar/
   src/lib.rs       SecEdgarProvider, typed filing domain, stub provider
   src/live.rs      LiveSecEdgarProvider behind the live feature
+
+crates/<source>/
+  src/lib.rs       Source-specific request/response types and provider trait
 ```
 
 Future ports should follow the same shape: source-specific contract first,
@@ -126,7 +138,10 @@ a port needs to emit a suggestor, proposal, or other Converge-shaped artifact.
 
 ## Status
 
-Scaffolded on 2026-05-05. `embassy-linkedin` is the first extracted port.
+Extracted on 2026-05-05 and expanded into a multi-port source-observation
+workspace. `embassy-linkedin` was the first extracted port; the current
+workspace also carries live and skeleton ports for sanctions, procurement,
+company identity, research, IP, and public-sector sources.
 
 ## License
 

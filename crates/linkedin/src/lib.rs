@@ -174,7 +174,7 @@ impl<P: LinkedInProvider + 'static> Suggestor for LinkedInLookupSuggestor<P> {
     }
 
     fn provenance(&self) -> Provenance {
-        Provenance::from(LINKEDIN_PROVENANCE.as_str())
+        LINKEDIN_PROVENANCE.provenance()
     }
 
     fn accepts(&self, ctx: &dyn Context) -> bool {
@@ -226,7 +226,7 @@ impl<P: LinkedInProvider + 'static> Suggestor for LinkedInLookupSuggestor<P> {
                         ContextKey::Hypotheses,
                         format!("linkedin:{}:{idx}", seed.id()),
                         payload,
-                        Provenance::from(LINKEDIN_PROVENANCE.as_str()),
+                        LINKEDIN_PROVENANCE.provenance(),
                     )
                     .with_confidence(0.95),
                 );
@@ -328,7 +328,7 @@ mod tests {
     #[test]
     fn suggestor_provenance_is_linkedin() {
         let s = LinkedInLookupSuggestor::new(Arc::new(StubLinkedInProvider));
-        assert_eq!(s.provenance().as_str(), "linkedin");
+        assert_eq!(s.provenance(), LINKEDIN_PROVENANCE.provenance());
     }
 
     #[test]
