@@ -7,7 +7,7 @@
 [![Crates.io](https://img.shields.io/crates/v/converge-embassy-pack.svg)](https://crates.io/crates/converge-embassy-pack)
 [![docs.rs](https://docs.rs/converge-embassy-pack/badge.svg)](https://docs.rs/converge-embassy-pack)
 [![dependency status](https://deps.rs/repo/github/Reflective-Lab/embassy-ports/status.svg)](https://deps.rs/repo/github/Reflective-Lab/embassy-ports)
-![MSRV](https://img.shields.io/badge/MSRV-1.94.0-blue)
+![MSRV](https://img.shields.io/badge/MSRV-1.96.0-blue)
 <img alt="gitleaks badge" src="https://img.shields.io/badge/protected%20by-gitleaks-blue">
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
