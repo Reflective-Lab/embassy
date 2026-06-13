@@ -123,6 +123,7 @@ impl<P: UsptoProvider + 'static> Suggestor for UsptoLookupSuggestor<P> {
                         payload_value,
                         USPTO_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

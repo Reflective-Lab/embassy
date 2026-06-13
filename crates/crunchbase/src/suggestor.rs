@@ -123,6 +123,7 @@ impl<P: CrunchbaseProvider + 'static> Suggestor for CrunchbaseLookupSuggestor<P>
                         payload_value,
                         CRUNCHBASE_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

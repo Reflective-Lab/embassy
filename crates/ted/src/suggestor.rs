@@ -112,6 +112,7 @@ impl<P: TedProvider + 'static> Suggestor for TedLookupSuggestor<P> {
                         payload,
                         TED_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

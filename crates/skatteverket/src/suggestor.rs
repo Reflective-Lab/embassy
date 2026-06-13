@@ -113,6 +113,7 @@ impl<P: SkatteverketProvider + 'static> Suggestor for SkatteverketLookupSuggesto
                         payload,
                         SKATTEVERKET_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.97),
                 );
             }

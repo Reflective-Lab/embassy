@@ -228,6 +228,7 @@ impl<P: LinkedInProvider + 'static> Suggestor for LinkedInLookupSuggestor<P> {
                         payload,
                         LINKEDIN_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

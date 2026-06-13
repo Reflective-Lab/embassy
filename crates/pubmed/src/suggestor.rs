@@ -123,6 +123,7 @@ impl<P: PubmedProvider + 'static> Suggestor for PubmedLookupSuggestor<P> {
                         payload_value,
                         PUBMED_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

@@ -117,6 +117,7 @@ impl<P: BolagsverketProvider + 'static> Suggestor for BolagsverketLookupSuggesto
                         payload,
                         BOLAGSVERKET_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

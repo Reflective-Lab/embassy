@@ -117,6 +117,7 @@ impl<P: ViesProvider + 'static> Suggestor for ViesLookupSuggestor<P> {
                         payload,
                         VIES_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.98),
                 );
             }

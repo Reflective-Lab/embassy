@@ -123,6 +123,7 @@ impl<P: EpoProvider + 'static> Suggestor for EpoLookupSuggestor<P> {
                         payload_value,
                         EPO_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

@@ -112,6 +112,7 @@ impl<P: CommerceCslProvider + 'static> Suggestor for CommerceCslLookupSuggestor<
                         payload,
                         COMMERCE_CSL_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.99),
                 );
             }

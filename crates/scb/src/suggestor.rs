@@ -123,6 +123,7 @@ impl<P: ScbProvider + 'static> Suggestor for ScbLookupSuggestor<P> {
                         payload_value,
                         SCB_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

@@ -123,6 +123,7 @@ impl<P: WikidataProvider + 'static> Suggestor for WikidataLookupSuggestor<P> {
                         payload_value,
                         WIKIDATA_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

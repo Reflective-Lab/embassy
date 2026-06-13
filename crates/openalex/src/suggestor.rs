@@ -123,6 +123,7 @@ impl<P: OpenAlexProvider + 'static> Suggestor for OpenAlexLookupSuggestor<P> {
                         payload_value,
                         OPENALEX_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

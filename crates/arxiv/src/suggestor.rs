@@ -123,6 +123,7 @@ impl<P: ArxivProvider + 'static> Suggestor for ArxivLookupSuggestor<P> {
                         payload_value,
                         ARXIV_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

@@ -112,6 +112,7 @@ impl<P: UsaspendingProvider + 'static> Suggestor for UsaspendingLookupSuggestor<
                         payload,
                         USASPENDING_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

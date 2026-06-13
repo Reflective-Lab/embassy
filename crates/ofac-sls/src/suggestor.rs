@@ -117,6 +117,7 @@ impl<P: OfacSlsProvider + 'static> Suggestor for OfacSlsLookupSuggestor<P> {
                         payload,
                         OFAC_SLS_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.99),
                 );
             }

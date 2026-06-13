@@ -123,6 +123,7 @@ impl<P: CompaniesHouseProvider + 'static> Suggestor for CompaniesHouseLookupSugg
                         payload_value,
                         COMPANIES_HOUSE_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }

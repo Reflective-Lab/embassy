@@ -140,6 +140,7 @@ impl<P: SecEdgarProvider + 'static> Suggestor for SecFilingSuggestor<P> {
                         payload,
                         SEC_EDGAR_PROVENANCE.provenance(),
                     )
+                    .with_subject_from(seed)
                     .with_confidence(0.95),
                 );
             }
