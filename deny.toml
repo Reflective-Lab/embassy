@@ -11,6 +11,13 @@ yanked = "warn"
 # available, why the path is not in our exposure surface).
 ignore = [
     # Add advisories here that the foundation also ignores, with justification.
+    # quick-xml <0.41 — duplicate-attribute quadratic run time (0194) and
+    # NsReader namespace-allocation DoS (0195), fixed in >=0.41. Transitive
+    # via object_store (semver-locked upstream); no fix path until upstream
+    # moves. XML surface is the storage provider's own API responses; both
+    # advisories are DoS-class. Added 2026-07-02.
+    "RUSTSEC-2026-0194",
+    "RUSTSEC-2026-0195",
 ]
 
 [licenses]
